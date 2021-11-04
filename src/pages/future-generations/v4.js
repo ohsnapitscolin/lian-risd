@@ -95,7 +95,9 @@ const GuidelinesButton = styled.button`
 //   grid-template-columns: ${p => `repeat(${p.grid}, 1fr)`};
 // `;
 
-export default function IndexPage() {
+export default function V4() {
+  if (typeof window === "undefined") return null;
+
   const [person] = useState(generate());
   const [guidelines, setGuidelines] = useState(false);
 

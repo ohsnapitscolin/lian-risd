@@ -66,7 +66,9 @@ const InfoBox = styled.div`
   }
 `
 
-export default function IndexPage() {
+export default function V1() {
+  if (typeof window === "undefined") return null;
+
   const person = generate();
 
   return (

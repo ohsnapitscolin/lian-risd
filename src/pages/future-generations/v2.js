@@ -69,7 +69,9 @@ const Color = styled.div`
   background-color: ${p => `#${p.color}`};
 `
 
-export default function IndexPage() {
+export default function V2() {
+  if (typeof window === "undefined") return null;
+
   const person = generate();
 
   return (

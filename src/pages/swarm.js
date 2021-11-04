@@ -58,7 +58,7 @@ const Word = styled.span`
   display: inline-block;
 `;
 
-export default function SwarmPage() {
+export default function Swarm() {
   const [text, setText] = useState("");
   const [boom, goBoom] = useState(false)
   

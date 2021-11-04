@@ -74,7 +74,9 @@ const Color = styled.div`
   background-color: ${p => `#${p.color}`};
 `
 
-export default function IndexPage() {
+export default function V3() {
+  if (typeof window === "undefined") return null;
+
   const people = flatten();
 
   return (
