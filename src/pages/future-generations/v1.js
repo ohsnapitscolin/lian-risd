@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import "../style/index.css"
+import "../../style/index.css"
 
 import generate from "../../utils/tree";
 import Export from "../../components/Export";
