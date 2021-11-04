@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import { flatten } from "../../utils/tree";
+import "../style/index.css"
 
+import { flatten } from "../../utils/tree";
 import Export from "../../components/Export";
 
 const Container = styled.div`

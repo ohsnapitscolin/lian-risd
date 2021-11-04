@@ -3,7 +3,6 @@ import styled, { keyframes } from "styled-components"
 
 import "../style/index.css"
 
-
 const explode = keyframes`
   0% {
     font-variation-settings: "SWRM" 0;

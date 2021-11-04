@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import generate from "../../utils/tree";
-import FlowerRound from '../../svg/flower-round.svg';
+import "../style/index.css"
 
+import generate from "../../utils/tree";
 import Export from "../../components/Export";
+import FlowerRound from '../../svg/flower-round.svg';
 
 const SCALE = 1;
 const SIZE = 60;

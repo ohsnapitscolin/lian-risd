@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import generate from "../../utils/tree";
+import "../style/index.css"
 
+import generate from "../../utils/tree";
 import Export from "../../components/Export";
+
 
 const Container = styled.div`
   width: 100%;
@@ -45,7 +47,6 @@ const PersonBox = styled.div`
   height: ${p => `${40 / ((p.depth + 1) / 3)}px`};
   cursor: pointer;
   margin: 1px;
-
 `
 
 const InfoBox = styled.div`
