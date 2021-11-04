@@ -18,7 +18,7 @@ export default function Export({ options = {} }) {
     htmlToImage.toPng(
       document.getElementById("export-id"), 
       {
-        pixelRatio: 10,
+        pixelRatio: 5,
         ...options
       }
     ).then((dataUrl) => {
