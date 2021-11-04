@@ -102,7 +102,7 @@ export default function V4() {
   const [person] = useState(generate());
   const [guidelines, setGuidelines] = useState(false);
 
-  function toggleGuidlines() {
+  function toggleGuidelines() {
     setGuidelines(!guidelines);
   }
 
@@ -111,8 +111,8 @@ export default function V4() {
       <Wrapper>
         <Person person={person} guidelines={guidelines}/>
       </Wrapper>
-      <GuidelinesButton onClick={toggleGuidlines}>
-        Toggle Guidlines
+      <GuidelinesButton onClick={toggleGuidelines}>
+        Toggle Guidelines
       </GuidelinesButton>
       <Export />
     </Container>
