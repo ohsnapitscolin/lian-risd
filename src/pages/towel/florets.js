@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-
-import usePixi from "../../hooks/pixi";
-import Florets from "../../towel/florets";
+import React, { useState, useEffect } from "react";
 
 import Towel from "../../components/Towel";
 
 export default function FloretsTowel() {
-  const [towel] = useState(new Florets());
+  const [towel, setTowel] = useState(null);
 
-  const { pixiRef } = usePixi(towel, {});
+  useEffect(() => {
+    async function importTowel() {
+      const Florets = await import("../../towel/florets");
+      setTowel(new Florets.default());
+    }
+    importTowel();
+  }, []);
 
-  return <Towel towel={towel} pixiRef={pixiRef} />;
+  return towel ? <Towel towel={towel} /> : null;
 }

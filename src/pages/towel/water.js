@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-
-import usePixi from "../../hooks/pixi";
-import Water from "../../towel/water";
+import React, { useState, useEffect } from "react";
 
 import Towel from "../../components/Towel";
 
 export default function WaterTowel() {
-  const [towel] = useState(new Water());
+  const [towel, setTowel] = useState(null);
 
-  const { pixiRef } = usePixi(towel, {});
+  useEffect(() => {
+    async function importTowel() {
+      const Water = await import("../../towel/water");
+      setTowel(new Water.default());
+    }
+    importTowel();
+  }, []);
 
-  return <Towel towel={towel} pixiRef={pixiRef} />;
+  return towel ? <Towel towel={towel} /> : null;
 }
