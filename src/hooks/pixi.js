@@ -17,8 +17,7 @@ export default function usePixi(towel, initialState) {
       const app = new Application({
         width: 680,
         height: 1200,
-        // backgroundColor: `0x${randColor()}`
-        backgroundColor: 0xFECF0A
+        backgroundColor: `0x${randColor()}`
       });
 
       app.renderer.plugins.interaction.autoPreventDefault = false;
