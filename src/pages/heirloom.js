@@ -21,9 +21,9 @@ export default function Heirloom() {
     <>
       <TextArea contentEditable family={family} />  
       <ButtonWrapper>
-        <button onClick={setFamily("Garden")}>Garden</button>
-        <button onClick={setFamily("Home")}>Home</button>
-        <button onClick={setFamily("Seaside")}>Seaside</button>
+        <button onClick={() => setFamily("Garden")}>Garden</button>
+        <button onClick={() => setFamily("Home")}>Home</button>
+        <button onClick={() => setFamily("Seaside")}>Seaside</button>
       </ButtonWrapper>
     </>
   );
