@@ -80,7 +80,7 @@ export default function V2() {
       <Wrapper>
         <Person person={person} />
       </Wrapper>
-      <Export />
+      <Export name="future-generations.png" />
     </Container>
   );
 }

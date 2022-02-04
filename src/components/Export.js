@@ -9,7 +9,7 @@ const Button = styled.button`
   margin-top: 32px;
 `;
 
-export default function Export({ options = {} }) {
+export default function Export({ name, options = {} }) {
   const [exporting, setExporting] = useState(false)
 
   function exportImage() {
@@ -22,7 +22,7 @@ export default function Export({ options = {} }) {
         ...options
       }
     ).then((dataUrl) => {
-      download(dataUrl, 'future-generations.png');
+      download(dataUrl, name);
       setExporting(false);
     });
   }

@@ -97,10 +97,10 @@ const GuidelinesButton = styled.button`
 // `;
 
 export default function V4() {
-  if (typeof window === "undefined") return null;
-
   const [person] = useState(generate());
   const [guidelines, setGuidelines] = useState(false);
+
+  if (typeof window === "undefined") return null;
 
   function toggleGuidelines() {
     setGuidelines(!guidelines);
@@ -114,7 +114,7 @@ export default function V4() {
       <GuidelinesButton onClick={toggleGuidelines}>
         Toggle Guidelines
       </GuidelinesButton>
-      <Export />
+      <Export name="future-generations.png" />
     </Container>
   );
 }

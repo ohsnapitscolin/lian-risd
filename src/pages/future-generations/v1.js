@@ -77,7 +77,7 @@ export default function V1() {
       <Wrapper>
         <Person person={person} />
       </Wrapper>
-      <Export />
+      <Export name="future-generations.png" />
     </Container>
   );
 }

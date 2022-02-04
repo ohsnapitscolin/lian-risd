@@ -87,7 +87,7 @@ export default function V3() {
           {people.map(p => <Row people={p} />)}
         </Generations>
       </Wrapper>
-      <Export />
+      <Export name="future-generations.png" />
     </Container>
   );
 }
