@@ -8,10 +8,10 @@ const Bunch = true;
 const Width = 25;
 const Offset = 25;
 
-const GapRange = [0, 10];
+const GapRange = [0, 15];
 const BunchRateRange = [5, 8];
 const MinBunchHeightRange = [10, 30];
-const MaxBunchHeightRange = [30, 80];
+const MaxBunchHeightRange = [30, 70];
 
 export default class Switch extends Towel {
   initialize(app) {
@@ -44,9 +44,12 @@ export default class Switch extends Towel {
     this.y = 0;
     this.x = 0;
 
-    this.interval = this.getRandomInt(...MinBunchHeightRange);
     this.rate = this.getRandomInt(...BunchRateRange);
-    this.direction = 1;
+    this.direction = this.getRandomInt(0, 1);
+
+    this.interval = this.direction
+      ? this.getRandomInt(...MaxBunchHeightRange)
+      : this.getRandomInt(...MinBunchHeightRange);
 
     let offset = -1000;
     const Buffer = 100;
