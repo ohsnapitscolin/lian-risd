@@ -1,9 +1,27 @@
 export default function chance(percent) {
-  const chance = Math.floor(Math.random() * 100)
+  const chance = Math.floor(Math.random() * 100);
   return percent >= chance;
 }
 
 let availableColors = [];
+
+export class ColorGenerator {
+  constructor(colors) {
+    this.colors = colors;
+    this.availableColors = [];
+  }
+
+  randColor() {
+    if (!this.availableColors.length) {
+      this.availableColors = [...this.colors];
+    }
+
+    const index = [Math.floor(Math.random() * this.availableColors.length)];
+    const color = this.availableColors[index];
+    this.availableColors.splice(index, 1);
+    return color;
+  }
+}
 
 export function randColor() {
   // var letters = "0123456789ABCDEF";
@@ -19,8 +37,8 @@ export function randColor() {
 
   const index = [Math.floor(Math.random() * availableColors.length)];
   const color = availableColors[index];
-  availableColors.splice(index, 1)
-  return color
+  availableColors.splice(index, 1);
+  return color;
 }
 
 const Colors = [
@@ -63,4 +81,5 @@ const Colors = [
   "3b678c",
   "a6b5c8",
   "edc987",
-  "c9545b"]
+  "c9545b",
+];
