@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { ColorGenerator } from "../utils/chance";
 import { Helmet } from "react-helmet";
 import ant from "../images/ant.gif";
+import leaf from "../images/leaf.png";
 import { groupBy } from "../utils/array";
 import Modal from "react-modal";
 
@@ -112,8 +113,16 @@ const ModelCloseButton = styled.button`
   border: none;
   appearance: none;
   background: none;
-  padding: 16px;
   z-index: 1;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+
+  }
 `;
 
 const modalStyles = {
@@ -203,7 +212,9 @@ export default function Ants() {
         style={modalStyles}
         contentLabel="Modal"
       >
-        <ModelCloseButton onClick={closeModal}>X</ModelCloseButton>
+        <ModelCloseButton onClick={closeModal}>
+          <img src={leaf}></img>
+        </ModelCloseButton>
         <ModalContent>
           <ModalCopy>An ant colony has memories<br></br>that its individual members don’t have.</ModalCopy>
         </ModalContent>
