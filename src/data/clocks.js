@@ -275,11 +275,11 @@ export const Equations = [
       },
       {
         key: "verbs",
-        odds: 0.5,
         interval: 7,
       },
       {
         key: "prepositions",
+        odds: 50,
         interval: 12,
       },
       {
