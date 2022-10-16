@@ -4,3 +4,8 @@ export function groupBy(array, fn) {
     return memo;
   }, {});
 }
+
+export function randomValue(array) {
+  const index = [Math.floor(Math.random() * array.length)];
+  return array[index];
+}

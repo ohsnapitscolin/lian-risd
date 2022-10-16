@@ -1,11 +1,18 @@
 @font-face {
   font-family: "Needle Work";
-  src: url("../fonts/NeedleworkMurmurationsVF.ttf") format('truetype');
+  src: url("../fonts/NeedleworkMurmurationsVF.ttf") format("truetype");
+}
 
+html,
+body,
+#___gatsby,
+#gatsby-focus-wrapper {
+  width: 100%;
+  height: 100%;
 }
 
 body {
-  margin: 32px;
-  background-color: #EDE6D3;
+  margin: 0;
+  background-color: #ede6d3;
   font-family: Arial !important;
 }
