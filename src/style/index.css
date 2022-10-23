@@ -3,6 +3,16 @@
   src: url("../fonts/NeedleworkMurmurationsVF.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Bradford";
+  src: url("../fonts/BradfordMonoTrial-RegularTrial.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Grey";
+  src: url("../fonts/GreyTrial-Regular.otf") format("opentype");
+}
+
 html,
 body,
 #___gatsby,
