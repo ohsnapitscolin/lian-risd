@@ -4,12 +4,12 @@ import { Equations } from "../data/clocks";
 import { randomValue } from "../utils/array";
 import chance from "../utils/chance";
 import { responsive } from "../utils/style";
-import Cursor from "../components/Cursor";
+import ClockCursor from "../components/cursors/ClockCursor";
 
 import "../style/index.css";
 
 const Container = styled.div`
-  color: #fdff9e;
+  color: #fcf1a4;
   background-color: #00022c;
 
   width: 100%;
@@ -20,7 +20,7 @@ const Container = styled.div`
   padding: 24px;
 
   ${responsive.md`
-    padding: 100px;
+    padding: 50px 75px;
   `}
 
   position: relative;
@@ -52,9 +52,8 @@ const Grid = styled.div`
 
 const Part = styled.span`
   font-family: "Bradford";
-  font-size: 22px;
+  font-size: 20px;
   letter-spacing: -0.05em;
-  text-transform: lowercase;
 
   opacity: ${(p) => p.percent};
   transition: opacity 1s linear;
@@ -62,6 +61,7 @@ const Part = styled.span`
 
 const Toggles = styled.div`
   display: flex;
+  align-items: flex-start;
   position: absolute;
   top: 0;
   left: 0;
@@ -74,8 +74,8 @@ const Toggle = styled.button`
   padding: 0;
 
   font-family: "Grey";
-  color: #fdff9e;
-  font-size: 22px;
+  color: #fcf1a4;
+  font-size: 18px;
   line-height: 26px;
   padding-bottom: 4px;
   margin-right: 36px;
@@ -85,20 +85,12 @@ const Toggle = styled.button`
   }
 
   &:hover {
-    opacity: 0.6;
     cursor: none;
   }
 
   &.active {
-    border-bottom: 1px solid #fdff9e;
+    border-bottom: 1.5px solid #fcf1a4;
   }
-`;
-
-const CursorContent = styled.div`
-  background-color: #fdff9e;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
 `;
 
 export default function Clocks() {
@@ -161,11 +153,12 @@ export default function Clocks() {
     setOutput(generateOutput(newEquation));
   };
 
-  const parts = output.parts.map((part) => {
+  const parts = output.parts.map((part, index) => {
     const { key, value, percent } = part;
     return (
       <Part key={key} percent={percent}>
         {value || " "}
+        {index === output.parts.length - 1 ? "." : ""}
       </Part>
     );
   });
@@ -173,9 +166,7 @@ export default function Clocks() {
   return (
     <>
       <Container>
-        <Cursor>
-          <CursorContent />
-        </Cursor>
+        <ClockCursor />
         <Content>
           <Toggles>
             {Equations.map((e, index) => {
