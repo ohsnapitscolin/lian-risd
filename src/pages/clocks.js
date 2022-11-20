@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { Equations } from "../data/clocks";
 import { randomValue } from "../utils/array";
 import chance from "../utils/chance";
@@ -8,25 +8,20 @@ import ClockCursor from "../components/cursors/ClockCursor";
 
 import "../style/index.css";
 
-const Container = styled.div`
-  color: #fcf1a4;
-  background-color: #00022c;
+const BodyStyle = createGlobalStyle`
+  body {
+    color: #008BB7 !important;
+    background-color: #F5F5F5  !important;
+  }
+`;
 
+const Container = styled.div`
   width: 100%;
   height: 100%;
 
-  box-sizing: border-box;
-
-  padding: 24px;
-
-  ${responsive.md`
-    padding: 50px 75px;
-  `}
-
   position: relative;
-  overflow: hidden;
 
-  cursor: none;
+  // cursor: none;
 `;
 
 const Content = styled.div`
@@ -40,31 +35,37 @@ const Content = styled.div`
 `;
 
 const Grid = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   width: 100%;
-
-  grid-template-row: repeat(${(p) => p.columns}, 1fr);
-
-  ${responsive.md`
-    grid-template-columns: 2fr repeat(${(p) => p.columns - 1}, 1fr);
-  `}
+  height: 100%;
+  overflow: visible;
 `;
 
-const Part = styled.span`
-  font-family: "Bradford";
-  font-size: 20px;
+const Part = styled.div`
+  display: flex;
+  align-items: center;
+  font-family: "Grey";
+  font-size: 220px;
   letter-spacing: -0.05em;
 
   opacity: ${(p) => p.percent};
   transition: opacity 1s linear;
+  white-space: nowrap;
+  min-height: 0;
+  vertical-align: middle;
 `;
 
 const Toggles = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Toggle = styled.button`
@@ -72,24 +73,25 @@ const Toggle = styled.button`
   background: none;
   border: 0;
   padding: 0;
+  cursor: pointer;
 
-  font-family: "Grey";
-  color: #fcf1a4;
-  font-size: 18px;
-  line-height: 26px;
-  padding-bottom: 4px;
-  margin-right: 36px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  background-color: #d9d9d9;
+  margin-bottom: 32px;
 
   &:last-of-type {
-    margin-right: 0;
+    margin-botton: 0;
   }
 
   &:hover {
-    cursor: none;
+    opacity: 0.56;
   }
 
   &.active {
-    border-bottom: 1.5px solid #fcf1a4;
+    background-color: #008bb7;
   }
 `;
 
@@ -155,6 +157,7 @@ export default function Clocks() {
 
   const parts = output.parts.map((part, index) => {
     const { key, value, percent } = part;
+    if (!value) return null;
     return (
       <Part key={key} percent={percent}>
         {value || " "}
@@ -165,8 +168,9 @@ export default function Clocks() {
 
   return (
     <>
+      <BodyStyle />
       <Container>
-        <ClockCursor />
+        {/* <ClockCursor /> */}
         <Content>
           <Toggles>
             {Equations.map((e, index) => {
@@ -175,9 +179,7 @@ export default function Clocks() {
                   key={index}
                   className={`${e === equation ? "active" : ""}`}
                   onClick={() => toggle(index)}
-                >
-                  clock {index + 1}
-                </Toggle>
+                />
               );
             })}
           </Toggles>

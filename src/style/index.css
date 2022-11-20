@@ -23,6 +23,8 @@ body,
 
 body {
   margin: 0;
+  padding: 24px;
   background-color: #ede6d3;
   font-family: Arial !important;
+  box-sizing: border-box;
 }
