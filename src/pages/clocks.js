@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { Helmet } from "react-helmet";
 import { Equations } from "../data/clocks";
 import { randomValue } from "../utils/array";
 import chance from "../utils/chance";
@@ -209,6 +210,10 @@ export default function Clocks() {
 
   return (
     <>
+      <Helmet>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </Helmet>
+
       <BodyStyle />
       <Container>
         {/* <ClockCursor /> */}
