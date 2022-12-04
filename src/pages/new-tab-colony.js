@@ -8,9 +8,19 @@ import leaf from "../images/leaf.png";
 import { groupBy } from "../utils/array";
 import Modal from "react-modal";
 
-import "../style/index.css"
+import "../style/index.css";
 
 const StorageKey = "ants";
+
+const ColorList = [
+  { minutes: 1, color: "white", background: "443228" },
+  { minutes: 5, color: "white", background: "535435" },
+  { minutes: 10, color: "black", background: "8CA455" },
+  { minutes: 30, color: "black", background: "9FA04A" },
+  { minutes: 60, color: "black", background: "D2D296" },
+  { minutes: 120, color: "black", background: "F0EDAE" },
+  { minutes: 480, color: "black", background: "E1F3F4" },
+];
 
 const Header = styled.div`
   display: flex;
@@ -85,7 +95,7 @@ const AntButton = styled.button`
     height: 100%;
     cursor: pointer;
   }
-`
+`;
 
 const ModalContent = styled.div`
   width: 100%;
@@ -99,7 +109,7 @@ const ModalContent = styled.div`
 `;
 
 const ModalCopy = styled.span`
-  color: #EDE6D3;
+  color: #ede6d3;
   text-align: center;
   line-height: 20px;
   letter-spacing: 5px;
@@ -109,7 +119,7 @@ const ModelCloseButton = styled.button`
   position: absolute;
   right: 32px;
   top: 32px;
-  color: #EDE6D3;
+  color: #ede6d3;
   border: none;
   appearance: none;
   background: none;
@@ -121,7 +131,6 @@ const ModelCloseButton = styled.button`
   img {
     width: 100%;
     height: 100%;
-
   }
 `;
 
@@ -141,6 +150,10 @@ export default function Ants() {
   const [colors] = useState(new ColorGenerator(Colors));
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
+  const [time] = useState(
+    new URLSearchParams(window.location.search).get("time")
+  );
+
   useEffect(() => {
     let storedAnts = JSON.parse(window.localStorage.getItem(StorageKey)) || [];
     storedAnts = storedAnts.map((ant) => {
@@ -156,6 +169,28 @@ export default function Ants() {
     updatedAnts.unshift({ date: new Date(), background, text });
 
     window.localStorage.setItem(StorageKey, JSON.stringify(updatedAnts));
+
+    if (time) {
+      let prevAnt = {};
+      updatedAnts.forEach((ant) => {
+        const date = new Date(ant.date);
+        const ms = new Date(prevAnt.date) - date || 0;
+
+        const minutes = ms / 1000 / 60;
+
+        for (let i = 0; i < ColorList.length; i++) {
+          const currColor = ColorList[i];
+          if (minutes < currColor.minutes || i === ColorList.length - 1) {
+            ant.text = currColor.color;
+            ant.background = currColor.background;
+            break;
+          }
+        }
+
+        prevAnt = ant;
+      });
+    }
+
     setAnts(updatedAnts);
   }, [colors]);
 
@@ -181,7 +216,7 @@ export default function Ants() {
       <Header>
         <Title>new tab colony</Title>
         <AntButton onClick={openModal}>
-          <img src={ant}/>
+          <img src={ant} />
         </AntButton>
       </Header>
 
@@ -216,7 +251,10 @@ export default function Ants() {
           <img src={leaf}></img>
         </ModelCloseButton>
         <ModalContent>
-          <ModalCopy>An ant colony has memories<br></br>that its individual members don’t have.</ModalCopy>
+          <ModalCopy>
+            An ant colony has memories<br></br>that its individual members don’t
+            have.
+          </ModalCopy>
         </ModalContent>
       </Modal>
     </>
