@@ -215,6 +215,7 @@ export default function Ants() {
       <Helmet>
         <title>&lrm;</title>
         <link rel="icon" href={ant} />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
       </Helmet>
 
       <Header>
