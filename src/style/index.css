@@ -13,6 +13,11 @@
   src: url("../fonts/GreyTrial-Regular.otf") format("opentype");
 }
 
+@font-face {
+  font-family: "Plaid";
+  src: url("../fonts/Plaid-S.otf") format("opentype");
+}
+
 html,
 body,
 #___gatsby,

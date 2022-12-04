@@ -4,24 +4,34 @@ import { Equations } from "../data/clocks";
 import { randomValue } from "../utils/array";
 import chance from "../utils/chance";
 import { responsive } from "../utils/style";
-import ClockCursor from "../components/cursors/ClockCursor";
+// import ClockCursor from "../components/cursors/ClockCursor";
 
 import "../style/index.css";
 
+const IndexMap = {
+  0: { row: 1, column: 1, align: "left" },
+  1: { row: 2, column: 3, align: "left" },
+  2: { row: 3, column: 2, align: "left" },
+  3: { row: 4, column: 4, align: "right" },
+  4: { row: 5, column: 5, align: "right" },
+  5: { row: 6, column: 6, align: "right" },
+};
+
 const BodyStyle = createGlobalStyle`
   body {
-    color: #008BB7 !important;
-    background-color: #F5F5F5  !important;
+    color: #8CA455 !important;
+    background-color: #F5F5F5 !important;
+
+    ${responsive.md`
+      padding: 55px 70px !important;
+    `}
   }
 `;
 
 const Container = styled.div`
   width: 100%;
   height: 100%;
-
   position: relative;
-
-  // cursor: none;
 `;
 
 const Content = styled.div`
@@ -35,37 +45,57 @@ const Content = styled.div`
 `;
 
 const Grid = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  grid-template-rows: ${({ size }) => `repeat(${size}, calc(100% / ${size}))`};
+  grid-template-columns: ${({ size }) =>
+    `repeat(${size}, calc(100% / ${size}))`};
 `;
 
 const Part = styled.div`
   display: flex;
   align-items: center;
-  font-family: "Grey";
-  font-size: 220px;
-  letter-spacing: -0.05em;
+
+  &:first-of-type {
+    align-items: start;
+  }
+
+  &:last-of-type {
+    align-items: end;
+  }
+
+  font-family: "Plaid";
+  font-size: 24px;
+  letter-spacing: 0.1em;
+
+  ${responsive.md`
+    font-size: 48px;
+  `}
 
   opacity: ${(p) => p.percent};
   transition: opacity 1s linear;
-  white-space: nowrap;
+
   min-height: 0;
-  vertical-align: middle;
+  white-space: nowrap;
+
+  grid-row: ${({ index }) => IndexMap[index].row};
+  grid-column: ${({ index }) => IndexMap[index].column};
+  justify-self: ${({ index }) => IndexMap[index].align};
 `;
 
 const Toggles = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   position: absolute;
   top: 0;
   right: 0;
   z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  ${responsive.md`
+    flex-direction: row;
+  `}
 `;
 
 const Toggle = styled.button`
@@ -75,23 +105,31 @@ const Toggle = styled.button`
   padding: 0;
   cursor: pointer;
 
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  color: #8ca455;
+  border-bottom: 2px solid transparent;
 
-  background-color: #d9d9d9;
-  margin-bottom: 32px;
+  font-size: 14px;
+  margin-bottom: 16px;
 
   &:last-of-type {
-    margin-botton: 0;
+    margin-bottom: 0;
   }
+
+  ${responsive.md`
+    font-size: 20px;
+    margin: 0 24px 0 0;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  `}
 
   &:hover {
     opacity: 0.56;
   }
 
   &.active {
-    background-color: #008bb7;
+    border-color: #8ca455;
   }
 `;
 
@@ -159,7 +197,7 @@ export default function Clocks() {
     const { key, value, percent } = part;
     if (!value) return null;
     return (
-      <Part key={key} percent={percent}>
+      <Part key={key} index={index} percent={percent}>
         {value || " "}
         {index === output.parts.length - 1 ? "." : ""}
       </Part>
@@ -179,11 +217,13 @@ export default function Clocks() {
                   key={index}
                   className={`${e === equation ? "active" : ""}`}
                   onClick={() => toggle(index)}
-                />
+                >
+                  {index + 1}
+                </Toggle>
               );
             })}
           </Toggles>
-          <Grid columns={parts.length}>{parts}</Grid>
+          <Grid size={parts.length}>{parts}</Grid>
         </Content>
       </Container>
     </>
