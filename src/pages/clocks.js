@@ -69,8 +69,6 @@ const Part = styled.div`
   font-size: 24px;
   letter-spacing: 0.1em;
 
-  border: 1px solid red;
-
   ${responsive.md`
     font-size: 48px;
   `}
