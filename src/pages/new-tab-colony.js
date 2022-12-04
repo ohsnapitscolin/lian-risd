@@ -150,9 +150,11 @@ export default function Ants() {
   const [colors] = useState(new ColorGenerator(Colors));
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
-  const [time] = useState(
-    new URLSearchParams(window.location.search).get("time")
-  );
+  const [time] = useState(() => {
+    return typeof window === "undefined"
+      ? false
+      : new URLSearchParams(window.location.search).get("time");
+  });
 
   useEffect(() => {
     let storedAnts = JSON.parse(window.localStorage.getItem(StorageKey)) || [];
