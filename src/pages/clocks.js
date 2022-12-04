@@ -9,12 +9,12 @@ import { responsive } from "../utils/style";
 import "../style/index.css";
 
 const IndexMap = {
-  0: { row: 1, column: 1, align: "left" },
-  1: { row: 2, column: 3, align: "left" },
-  2: { row: 3, column: 2, align: "left" },
-  3: { row: 4, column: 4, align: "right" },
-  4: { row: 5, column: 5, align: "right" },
-  5: { row: 6, column: 6, align: "right" },
+  0: { row: 1, column: 1, align: "start" },
+  1: { row: 2, column: 3, align: "end" },
+  2: { row: 3, column: 2, align: "start" },
+  3: { row: 4, column: 4, align: "end" },
+  4: { row: 5, column: 5, align: "end" },
+  5: { row: 6, column: 6, align: "end" },
 };
 
 const BodyStyle = createGlobalStyle`
@@ -62,12 +62,14 @@ const Part = styled.div`
   }
 
   &:last-of-type {
-    align-items: end;
+    align-items: flex-end;
   }
 
   font-family: "Plaid";
   font-size: 24px;
   letter-spacing: 0.1em;
+
+  border: 1px solid red;
 
   ${responsive.md`
     font-size: 48px;
@@ -136,6 +138,9 @@ const Toggle = styled.button`
 export default function Clocks() {
   const [equation, setEquation] = useState(randomValue(Equations));
   const [output, setOutput] = useState(generateOutput(equation));
+
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => setHasMounted(true), []);
 
   function generateOutput(equation, output = { parts: [] }) {
     const newOutput = {
@@ -210,20 +215,24 @@ export default function Clocks() {
       <Container>
         {/* <ClockCursor /> */}
         <Content>
-          <Toggles>
-            {Equations.map((e, index) => {
-              return (
-                <Toggle
-                  key={index}
-                  className={`${e === equation ? "active" : ""}`}
-                  onClick={() => toggle(index)}
-                >
-                  {index + 1}
-                </Toggle>
-              );
-            })}
-          </Toggles>
-          <Grid size={parts.length}>{parts}</Grid>
+          {hasMounted && (
+            <>
+              <Toggles>
+                {Equations.map((e, index) => {
+                  return (
+                    <Toggle
+                      key={index}
+                      className={`${e === equation ? "active" : ""}`}
+                      onClick={() => toggle(index)}
+                    >
+                      {index + 1}
+                    </Toggle>
+                  );
+                })}
+              </Toggles>
+              <Grid size={parts.length}>{parts}</Grid>
+            </>
+          )}
         </Content>
       </Container>
     </>

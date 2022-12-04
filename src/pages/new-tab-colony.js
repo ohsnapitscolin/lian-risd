@@ -196,9 +196,11 @@ export default function Ants() {
     setAnts(updatedAnts);
   }, [colors]);
 
-  const groupedAnts = groupBy(ants, ({ date }) => {
-    return dayjs(date).format("MM/DD/YY");
-  });
+  const groupedAnts = time
+    ? { all: ants }
+    : groupBy(ants, ({ date }) => {
+        return dayjs(date).format("MM/DD/YY");
+      });
 
   function openModal() {
     setIsOpen(true);
