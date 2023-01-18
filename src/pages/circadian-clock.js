@@ -181,6 +181,7 @@ export default function Circadian() {
 
   const handleEnter = () => {
     setEntered(true);
+    play();
   };
 
   return (
@@ -205,7 +206,7 @@ export default function Circadian() {
       <Wall />
 
       {!entered && <button onClick={handleEnter}>Enter</button>}
-      {entered && !ready && <p>Loading...</p>}
+      {/* {entered && !ready && <p>Loading...</p>} */}
       {entered && ready && (
         <>
           <Light slide={slide} />
@@ -226,7 +227,6 @@ export default function Circadian() {
               />
             </WindowContent>
           </Window>
-          <button onClick={play}>Play</button>
           <input
             type="range"
             min="1"
