@@ -6,6 +6,8 @@ import Sky from "../components/Sky";
 import Blinds from "../components/Blinds";
 import SunCalc from "../utils/suncalc";
 import Stars from "../components/Stars";
+import { Howl } from "howler";
+import Draggable from "react-draggable";
 
 const BodyStyle = createGlobalStyle`
   body {
@@ -40,9 +42,8 @@ const Light = styled.div`
 `;
 
 const Window = styled.div`
-  width: 80%;
-  height: 80%;
-  max-width: 400px;
+  width: 100%;
+  height: 100%;
   position: absolute;
   left: 0;
   right: 0;
@@ -73,7 +74,6 @@ const WindowContent = styled.div`
 //   bottom: 0;
 //   margin: auto;
 //   box-shadow: inset -2px -2px 50px #ffffff, inset 12px 12px 15px black;
-
 // `;
 
 const Sun = styled.div`
@@ -95,9 +95,36 @@ const Tracks = {
   Meadow: "meadow",
 };
 
+const DragContainer = styled.div`
+  width: 100%;
+  height: 200%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  overflow: hidden;
+`;
+
+const Overlay = styled.div`
+  width: 100%;
+  height: 75%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: grab;
+`;
+
+const ambienceRef = new Howl({
+  src: [ambience],
+  loop: true,
+});
+
+const meadowRef = new Howl({
+  src: [meadow],
+  loop: true,
+});
+
 export default function Circadian() {
-  const ambienceRef = useRef(null);
-  const meadowRef = useRef(null);
   const [slide, setSlide] = useState(0);
   const [date, setDate] = useState(new Date());
 
@@ -107,12 +134,9 @@ export default function Circadian() {
   const [momentProgress, setMomentProgress] = useState(null);
   const [skyProgress, setSkyProgress] = useState(null);
 
-  const [ready, setReady] = useState(false);
   const [entered, setEntered] = useState(false);
 
-  const sun = useRef(
-    new SunCalc(41.82399, -71.412834, 1, new Date("2023-01-19T17:30:00"))
-  );
+  const sun = useRef(new SunCalc(41.82399, -71.412834));
 
   const requestRef = useRef();
 
@@ -130,53 +154,22 @@ export default function Circadian() {
     return () => cancelAnimationFrame(requestRef.current);
   }, [tick]); // Make sure the effect runs only once
 
-  // useEffect(() => {
-  //   const interval = window.setInterval(() => {
-  //     if (!ambienceRef.current) return;
-  //     const newVolumne = ambienceRef.current.volume + 0.1 * direction;
-  //     console.log(newVolumne);
-
-  //     if (newVolumne >= 1) {
-  //       ambienceRef.current.volume = 1;
-  //       setDirection(-1);
-  //     } else if (newVolumne <= 0) {
-  //       ambienceRef.current.volume = 0;
-  //       setDirection(1);
-  //     } else {
-  //       ambienceRef.current.volume = newVolumne;
-  //     }
-  //   }, 1000);
-
-  //   return () => {
-  //     window.clearInterval(interval);
-  //   };
-  // }, [direction, setDirection]);
+  useEffect(() => {
+    meadowRef.volume(1 - slide / 100);
+    ambienceRef.volume(1 - slide / 100);
+  }, [slide]);
 
   const play = () => {
-    if (meadowRef.current) {
-      meadowRef.current.paused
-        ? meadowRef.current.play()
-        : meadowRef.current.pause();
-    }
-    if (ambienceRef.current) {
-      ambienceRef.current.paused
-        ? ambienceRef.current.play()
-        : ambienceRef.current.pause();
-    }
+    meadowRef.play();
+    ambienceRef.play();
   };
 
-  const handleSlide = (e) => {
-    setSlide(e.target.value);
-  };
-
-  const handleCanPlayThrough = (e) => {
-    const name = e.target.getAttribute("name");
-    readiedTracks.current[name] = true;
-    if (
-      Object.keys(readiedTracks.current).length === Object.keys(Tracks).length
-    ) {
-      setReady(true);
-    }
+  const drag = (e, data) => {
+    if (!e.target.className.includes("react-draggable")) return;
+    const height = e.target.getBoundingClientRect().height;
+    const offset = height / 3;
+    const percent = data.y / offset;
+    setSlide((1 - percent) * 100);
   };
 
   const handleEnter = () => {
@@ -186,11 +179,12 @@ export default function Circadian() {
 
   return (
     <>
-      <audio
+      {/* <audio
         name="ambience"
         ref={ambienceRef}
         src={ambience}
         loop={true}
+        onPause
         onCanPlayThrough={handleCanPlayThrough}
       ></audio>
 
@@ -200,21 +194,20 @@ export default function Circadian() {
         src={meadow}
         loop={true}
         onCanPlayThrough={handleCanPlayThrough}
-      ></audio>
+      ></audio> */}
 
       <BodyStyle />
       <Wall />
 
       {!entered && <button onClick={handleEnter}>Enter</button>}
-      {/* {entered && !ready && <p>Loading...</p>} */}
-      {entered && ready && (
+      {entered && (
         <>
-          <Light slide={slide} />
+          {/* <Light slide={slide} /> */}
           {/* <p>
-        {date.toString()} {Math.round(skyProgress, 2)}{" "}
-        {Math.round(momentProgress * 100, 2)} {moment?.current.name}{" "}
-        {moment?.next.name}
-      </p> */}
+            {date.toString()} {Math.round(skyProgress, 2)}{" "}
+            {Math.round(momentProgress * 100, 2)} {moment?.current.name}{" "}
+            {moment?.next.name}
+          </p> */}
           <Window slide={slide}>
             <WindowContent>
               <Sky progress={skyProgress} />
@@ -226,15 +219,13 @@ export default function Circadian() {
                 momentProgress={momentProgress}
               />
             </WindowContent>
+
+            <DragContainer>
+              <Draggable name="drag" axis={"y"} bounds="parent" onDrag={drag}>
+                <Overlay />
+              </Draggable>
+            </DragContainer>
           </Window>
-          <input
-            type="range"
-            min="1"
-            max="100"
-            value={slide}
-            onChange={handleSlide}
-          />
-          <span>{slide}</span>
         </>
       )}
     </>

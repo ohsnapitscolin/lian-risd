@@ -37,7 +37,7 @@ const Blind = styled.div`
   position: relative;
 `;
 
-const Gradient = styled.div`
+const Fill = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -45,20 +45,26 @@ const Gradient = styled.div`
   width: 100%;
 `;
 
-const BeforeBlind = styled(Gradient).attrs((p) => ({
+const BeforeBlind = styled(Fill).attrs((p) => ({
   style: {
     opacity: p.transition,
+    background: getGradient(p.phase.from, p.phase.to, p.slide),
   },
-}))`
-  background: ${(p) => getGradient(p.phase.from, p.phase.to, p.slide)};
-`;
+}))``;
 
-const AfterBlind = styled(Gradient).attrs((p) => ({
+const AfterBlind = styled(Fill).attrs((p) => ({
   style: {
     opacity: p.transition,
+    background: getGradient(p.phase.from, p.phase.to, p.slide),
+  },
+}))``;
+
+const Shade = styled(Fill).attrs((p) => ({
+  style: {
+    opacity: p.slide / 400,
   },
 }))`
-  background: ${(p) => getGradient(p.phase.from, p.phase.to, p.slide)};
+  background-color: black;
 `;
 
 function getGradient(from, to, slide) {
@@ -93,6 +99,7 @@ export default function Blinds({ slide, moment, momentProgress }) {
                 phase={Phase[moment.next.name]}
                 transition={momentProgress}
               />
+              <Shade slide={slide} />
             </Blind>
           ))}
       </Grid>

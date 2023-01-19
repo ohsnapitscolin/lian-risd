@@ -18,7 +18,6 @@ const Phase = {
 };
 
 const PrimaryPhases = ["nadir", "sunset", "sunrise", "solarNoon"];
-// const PrimaryPhases = Object.keys(Phase);
 
 export default class Sun {
   moment = null;
