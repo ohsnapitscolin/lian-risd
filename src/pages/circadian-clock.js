@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import ambience from "../audio/ambience.wav";
+import ambience from "../audio/base.wav";
 import meadow from "../audio/meadow.wav";
 import styled, { createGlobalStyle } from "styled-components";
 import Sky from "../components/Sky";
@@ -7,7 +7,7 @@ import Blinds from "../components/Blinds";
 import SunCalc from "../utils/suncalc";
 import Stars from "../components/Stars";
 import Draggable from "react-draggable";
-// import { Howl } from "howler";
+import { Howl } from "howler";
 
 const BodyStyle = createGlobalStyle`
   body {
@@ -90,11 +90,6 @@ const Sun = styled.div`
   margin: auto;
 `;
 
-const Tracks = {
-  Ambience: "ambience",
-  Meadow: "meadow",
-};
-
 const DragContainer = styled.div`
   width: 100%;
   height: 200%;
@@ -114,15 +109,15 @@ const Overlay = styled.div`
   cursor: grab;
 `;
 
-// const ambienceHowl = new Howl({
-//   src: [ambience],
-//   loop: true,
-// });
+const ambienceHowl = new Howl({
+  src: [ambience],
+  loop: true,
+});
 
-// const meadowHowl = new Howl({
-//   src: [meadow],
-//   loop: true,
-// });
+const meadowHowl = new Howl({
+  src: [meadow],
+  loop: true,
+});
 
 const Content = styled.div`
   position: absolute;
@@ -134,22 +129,29 @@ export default function Circadian() {
   const [slide, setSlide] = useState(0);
   const [date, setDate] = useState(new Date());
 
-  const ambienceRef = useRef();
-  const meadowRef = useRef();
-
-  const readiedTracks = useRef({});
-
   const [moment, setMoment] = useState(null);
   const [momentProgress, setMomentProgress] = useState(null);
   const [skyProgress, setSkyProgress] = useState(null);
 
   const [entered, setEntered] = useState(false);
 
-  const sun = useRef(new SunCalc(41.82399, -71.412834));
+  const sun = useRef();
 
   const requestRef = useRef();
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        sun.current = new SunCalc(position.latitude, position.longitude);
+      },
+      () => {
+        sun.current = new SunCalc(41.82399, -71.412834);
+      }
+    );
+  }, []);
+
   const tick = useCallback(() => {
+    if (!sun.current) return;
     sun.current.tick();
     setSkyProgress(sun.current.getTotalProgress());
     setMomentProgress(sun.current.getMomentProgress());
@@ -164,29 +166,13 @@ export default function Circadian() {
   }, [tick]); // Make sure the effect runs only once
 
   useEffect(() => {
-    meadowRef.current.volume = 1 - slide / 100;
-    ambienceRef.current.volume = 1 - slide / 100;
-    console.log(ambienceRef.current.volume);
+    meadowHowl.volume(1 - slide / 100);
+    ambienceHowl.volume(1 - slide / 100);
   }, [slide]);
 
   const playAll = () => {
-    meadowRef.current.play();
-    ambienceRef.current.play();
-    // meadowHowl.play();
-    // ambienceHowl.play();
-  };
-
-  const pauseAll = () => {
-    meadowRef.current.pause();
-    ambienceRef.current.pause();
-  };
-
-  const play = () => {
-    meadowRef.current.play();
-  };
-
-  const pause = () => {
-    meadowRef.current.pause();
+    meadowHowl.play();
+    ambienceHowl.play();
   };
 
   const drag = (e, data) => {
@@ -204,23 +190,6 @@ export default function Circadian() {
 
   return (
     <>
-      <audio
-        name="ambience"
-        ref={ambienceRef}
-        src={ambience}
-        loop={true}
-        onPause={pauseAll}
-        onPlay={playAll}
-      ></audio>
-      <audio
-        name="meadow"
-        ref={meadowRef}
-        src={meadow}
-        loop={true}
-        onPause={pauseAll}
-        onPlay={playAll}
-      ></audio>
-
       <BodyStyle />
       <Wall />
 
