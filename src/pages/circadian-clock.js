@@ -7,7 +7,7 @@ import Blinds from "../components/Blinds";
 import SunCalc from "../utils/suncalc";
 import Stars from "../components/Stars";
 import Draggable from "react-draggable";
-import { Howl } from "howler";
+// import { Howl } from "howler";
 
 const BodyStyle = createGlobalStyle`
   body {
@@ -166,6 +166,7 @@ export default function Circadian() {
   useEffect(() => {
     meadowRef.current.volume = 1 - slide / 100;
     ambienceRef.current.volume = 1 - slide / 100;
+    console.log(ambienceRef.current.volume);
   }, [slide]);
 
   const playAll = () => {
