@@ -30,9 +30,9 @@ export default class Sun {
   offset = 0;
   interval = null;
 
-  constructor(longitude, latitude, accelerant, date) {
-    this.longitude = longitude;
+  constructor(latitude, longitude, accelerant, date) {
     this.latitude = latitude;
+    this.longitude = longitude;
     this.accelerant = accelerant;
     this.initialDate = date || new Date();
 
@@ -123,7 +123,7 @@ export default class Sun {
   }
 
   updatePhases(date = this.date) {
-    const times = SunCalc.getTimes(date, this.longitude, this.latitude);
+    const times = SunCalc.getTimes(date, this.latitude, this.longitude);
     const nextTimes = SunCalc.getTimes(
       this.getNextDay(date),
       this.longitude,

@@ -142,7 +142,11 @@ export default function Circadian() {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        sun.current = new SunCalc(position.longitude, position.latitude);
+        const coords = pos.coords;
+        sun.current = new SunCalc(
+          position.coords.latitude,
+          position.coords.longitude
+        );
       },
       () => {
         sun.current = new SunCalc(41.82399, -71.412834);
