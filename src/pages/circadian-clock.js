@@ -6,8 +6,8 @@ import Sky from "../components/Sky";
 import Blinds from "../components/Blinds";
 import SunCalc from "../utils/suncalc";
 import Stars from "../components/Stars";
-import { Howl } from "howler";
 import Draggable from "react-draggable";
+import { Howl } from "howler";
 
 const BodyStyle = createGlobalStyle`
   body {
@@ -114,21 +114,28 @@ const Overlay = styled.div`
   cursor: grab;
 `;
 
-const ambienceRef = new Howl({
-  src: [ambience],
-  html5: true,
-  loop: true,
-});
+// const ambienceHowl = new Howl({
+//   src: [ambience],
+//   loop: true,
+// });
 
-const meadowRef = new Howl({
-  src: [meadow],
-  html5: true,
-  loop: true,
-});
+// const meadowHowl = new Howl({
+//   src: [meadow],
+//   loop: true,
+// });
+
+const Content = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
 
 export default function Circadian() {
   const [slide, setSlide] = useState(0);
   const [date, setDate] = useState(new Date());
+
+  const ambienceRef = useRef();
+  const meadowRef = useRef();
 
   const readiedTracks = useRef({});
 
@@ -157,13 +164,28 @@ export default function Circadian() {
   }, [tick]); // Make sure the effect runs only once
 
   useEffect(() => {
-    meadowRef.volume(1 - slide / 100);
-    ambienceRef.volume(1 - slide / 100);
+    meadowRef.current.volume = 1 - slide / 100;
+    ambienceRef.current.volume = 1 - slide / 100;
   }, [slide]);
 
+  const playAll = () => {
+    meadowRef.current.play();
+    ambienceRef.current.play();
+    // meadowHowl.play();
+    // ambienceHowl.play();
+  };
+
+  const pauseAll = () => {
+    meadowRef.current.pause();
+    ambienceRef.current.pause();
+  };
+
   const play = () => {
-    meadowRef.play();
-    ambienceRef.play();
+    meadowRef.current.play();
+  };
+
+  const pause = () => {
+    meadowRef.current.pause();
   };
 
   const drag = (e, data) => {
@@ -176,27 +198,27 @@ export default function Circadian() {
 
   const handleEnter = () => {
     setEntered(true);
-    play();
+    playAll();
   };
 
   return (
     <>
-      {/* <audio
+      <audio
         name="ambience"
         ref={ambienceRef}
         src={ambience}
         loop={true}
-        onPause
-        onCanPlayThrough={handleCanPlayThrough}
+        onPause={pauseAll}
+        onPlay={playAll}
       ></audio>
-
       <audio
         name="meadow"
         ref={meadowRef}
         src={meadow}
         loop={true}
-        onCanPlayThrough={handleCanPlayThrough}
-      ></audio> */}
+        onPause={pauseAll}
+        onPlay={playAll}
+      ></audio>
 
       <BodyStyle />
       <Wall />
@@ -228,6 +250,11 @@ export default function Circadian() {
               </Draggable>
             </DragContainer>
           </Window>
+
+          {/* <Content>
+            <button onClick={play}>Play</button>
+            <button onClick={pause}>Pause</button>
+          </Content> */}
         </>
       )}
     </>
