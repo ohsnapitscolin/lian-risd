@@ -116,11 +116,13 @@ const Overlay = styled.div`
 
 const ambienceRef = new Howl({
   src: [ambience],
+  html5: true,
   loop: true,
 });
 
 const meadowRef = new Howl({
   src: [meadow],
+  html5: true,
   loop: true,
 });
 
