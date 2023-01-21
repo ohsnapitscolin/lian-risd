@@ -7,7 +7,8 @@ import Blinds from "../components/Blinds";
 import SunCalc from "../utils/suncalc";
 import Stars from "../components/Stars";
 import Draggable from "react-draggable";
-import { Howl } from "howler";
+import { Howl, Howler } from "howler";
+import unmute from "../vendor/unmute";
 
 const BodyStyle = createGlobalStyle`
   body {
@@ -109,10 +110,10 @@ const Overlay = styled.div`
   cursor: grab;
 `;
 
-// const ambienceHowl = new Howl({
-//   src: [ambience],
-//   html5: true,
-// });
+const ambienceHowl = new Howl({
+  src: [ambience],
+  loop: true,
+});
 
 // ambienceHowl.on("end", () => {
 //   ambienceHowl.play();
@@ -123,14 +124,10 @@ const meadowHowl = new Howl({
   loop: true,
 });
 
-const otherHowl = new Howl({
-  src: [meadow],
-  html5: true,
-  loop: true,
-});
-
 let audio_file;
 let gainNode;
+
+unmute(Howler.ctx, true);
 
 const Content = styled.div`
   position: absolute;
@@ -171,7 +168,7 @@ export default function Circadian() {
       console.log(this.volume);
       if (this.currentTime > this.duration - buffer) {
         this.currentTime = 0;
-        this.play();
+        // this.play();
       }
     });
 
@@ -202,14 +199,15 @@ export default function Circadian() {
   }, [tick]); // Make sure the effect runs only once
 
   useEffect(() => {
-    otherHowl.volume(1 - slide / 100);
-    gainNode.gain.value = 1 - slide / 100;
-    // ambienceHowl.volume(1 - slide / 100);s
+    meadowHowl.volume(1 - slide / 100);
+    ambienceHowl.volume(1 - slide / 100);
+    // gainNode.gain.value = 1 - slide / 100;
   }, [slide]);
 
   const playAll = () => {
-    otherHowl.play();
-    audio_file.play();
+    ambienceHowl.play();
+    meadowHowl.play();
+    // audio_file.play();
   };
 
   const drag = (e, data) => {
