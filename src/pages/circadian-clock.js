@@ -109,10 +109,26 @@ const Overlay = styled.div`
   cursor: grab;
 `;
 
-const ambienceHowl = new Howl({
-  src: [ambience],
-  loop: true,
+// const ambienceHowl = new Howl({
+//   src: [ambience],
+//   html5: true,
+// });
+
+const audio_file = new Audio(ambience);
+audio_file.volume = 0.5;
+audio_file.addEventListener("timeupdate", function () {
+  console.log(this.currentTime, this.duration);
+  var buffer = 0.44;
+  console.log(this.volume);
+  if (this.currentTime > this.duration - buffer) {
+    this.currentTime = 0;
+    this.play();
+  }
 });
+
+// ambienceHowl.on("end", () => {
+//   ambienceHowl.play();
+// });
 
 const meadowHowl = new Howl({
   src: [meadow],
@@ -174,12 +190,12 @@ export default function Circadian() {
 
   useEffect(() => {
     otherHowl.volume(1 - slide / 100);
-    ambienceHowl.volume(1 - slide / 100);
+    // ambienceHowl.volume(1 - slide / 100);s
   }, [slide]);
 
   const playAll = () => {
     otherHowl.play();
-    ambienceHowl.play();
+    audio_file.play();
   };
 
   const drag = (e, data) => {
