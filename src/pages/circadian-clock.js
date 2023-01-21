@@ -129,6 +129,9 @@ const otherHowl = new Howl({
   loop: true,
 });
 
+let audio_file;
+let gainNode;
+
 const Content = styled.div`
   position: absolute;
   top: 0;
@@ -160,7 +163,7 @@ export default function Circadian() {
       }
     );
 
-    const audio_file = new Audio(ambience);
+    audio_file = new Audio(ambience);
     audio_file.volume = 0.5;
     audio_file.addEventListener("timeupdate", function () {
       console.log(this.currentTime, this.duration);
@@ -171,6 +174,16 @@ export default function Circadian() {
         this.play();
       }
     });
+
+    const audioCtx = new AudioContext();
+
+    // Create a MediaElementAudioSourceNode
+    // Feed the HTMLMediaElement into it
+    const source = audioCtx.createMediaElementSource(audio_file);
+    gainNode = audioCtx.createGain();
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    gainNode.gain.value = 0.2;
   }, []);
 
   const tick = useCallback(() => {
@@ -190,6 +203,7 @@ export default function Circadian() {
 
   useEffect(() => {
     otherHowl.volume(1 - slide / 100);
+    gainNode.gain.value = 1 - slide / 100;
     // ambienceHowl.volume(1 - slide / 100);s
   }, [slide]);
 
