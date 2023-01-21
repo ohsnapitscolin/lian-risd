@@ -114,18 +114,6 @@ const Overlay = styled.div`
 //   html5: true,
 // });
 
-const audio_file = new Audio(ambience);
-audio_file.volume = 0.5;
-audio_file.addEventListener("timeupdate", function () {
-  console.log(this.currentTime, this.duration);
-  var buffer = 0.44;
-  console.log(this.volume);
-  if (this.currentTime > this.duration - buffer) {
-    this.currentTime = 0;
-    this.play();
-  }
-});
-
 // ambienceHowl.on("end", () => {
 //   ambienceHowl.play();
 // });
@@ -171,6 +159,18 @@ export default function Circadian() {
         sun.current = new SunCalc(41.82399, -71.412834);
       }
     );
+
+    const audio_file = new Audio(ambience);
+    audio_file.volume = 0.5;
+    audio_file.addEventListener("timeupdate", function () {
+      console.log(this.currentTime, this.duration);
+      var buffer = 0.44;
+      console.log(this.volume);
+      if (this.currentTime > this.duration - buffer) {
+        this.currentTime = 0;
+        this.play();
+      }
+    });
   }, []);
 
   const tick = useCallback(() => {
