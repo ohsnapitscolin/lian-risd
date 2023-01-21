@@ -158,7 +158,7 @@ export default function Circadian() {
       }
     );
 
-    unmute(Howler.ctx, true);
+    // unmute(Howler.ctx, true);
 
     // audio_file = new Audio(ambience);
     // audio_file.volume = 0.5;
