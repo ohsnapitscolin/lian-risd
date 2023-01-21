@@ -119,6 +119,12 @@ const meadowHowl = new Howl({
   loop: true,
 });
 
+const otherHowl = new Howl({
+  src: [meadow],
+  html5: true,
+  loop: true,
+});
+
 const Content = styled.div`
   position: absolute;
   top: 0;
