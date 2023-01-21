@@ -173,12 +173,12 @@ export default function Circadian() {
   }, [tick]); // Make sure the effect runs only once
 
   useEffect(() => {
-    meadowHowl.volume(1 - slide / 100);
+    otherHowl.volume(1 - slide / 100);
     ambienceHowl.volume(1 - slide / 100);
   }, [slide]);
 
   const playAll = () => {
-    meadowHowl.play();
+    otherHowl.play();
     ambienceHowl.play();
   };
 
