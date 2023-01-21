@@ -127,8 +127,6 @@ const meadowHowl = new Howl({
 let audio_file;
 let gainNode;
 
-unmute(Howler.ctx, true);
-
 const Content = styled.div`
   position: absolute;
   top: 0;
@@ -160,27 +158,29 @@ export default function Circadian() {
       }
     );
 
-    audio_file = new Audio(ambience);
-    audio_file.volume = 0.5;
-    audio_file.addEventListener("timeupdate", function () {
-      console.log(this.currentTime, this.duration);
-      var buffer = 0.44;
-      console.log(this.volume);
-      if (this.currentTime > this.duration - buffer) {
-        this.currentTime = 0;
-        // this.play();
-      }
-    });
+    unmute(Howler.ctx, true);
 
-    const audioCtx = new AudioContext();
+    // audio_file = new Audio(ambience);
+    // audio_file.volume = 0.5;
+    // audio_file.addEventListener("timeupdate", function () {
+    //   console.log(this.currentTime, this.duration);
+    //   var buffer = 0.44;
+    //   console.log(this.volume);
+    //   if (this.currentTime > this.duration - buffer) {
+    //     this.currentTime = 0;
+    //     // this.play();
+    //   }
+    // });
 
-    // Create a MediaElementAudioSourceNode
-    // Feed the HTMLMediaElement into it
-    const source = audioCtx.createMediaElementSource(audio_file);
-    gainNode = audioCtx.createGain();
-    source.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    gainNode.gain.value = 0.2;
+    // const audioCtx = new AudioContext();
+
+    // // Create a MediaElementAudioSourceNode
+    // // Feed the HTMLMediaElement into it
+    // const source = audioCtx.createMediaElementSource(audio_file);
+    // gainNode = audioCtx.createGain();
+    // source.connect(gainNode);
+    // gainNode.connect(audioCtx.destination);
+    // gainNode.gain.value = 0.2;
   }, []);
 
   const tick = useCallback(() => {
