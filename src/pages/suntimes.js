@@ -1,5 +1,5 @@
 import { getPercentages } from "../utils/suncalc";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 
 import "../style/index.css";
@@ -21,9 +21,21 @@ const Phase = {
   nadir: "0A1420",
 };
 
-const Bar = styled.div`
+const Bars = styled.div`
+  display: flex:
+  flex-direction: column;
+`;
+
+const TimeBar = styled.div`
   width: 100%;
   height 50px;
+  display: flex;
+  margin-bottom: 16px;
+`;
+
+const SongBar = styled.div`
+  width: 100%;
+  height 23px;
   display: flex;
 `;
 
@@ -49,41 +61,102 @@ export default function SunTimes() {
   return (
     <>
       <SunTime date={new Date("2023-01-01")} />
-      <SunTime date={new Date("2023-03-01")} />
-      <SunTime date={new Date("2023-06-01")} />
-      <SunTime date={new Date("2023-09-01")} />
+      <SunTime date={new Date("2023-04-01")} />
+      <SunTime date={new Date("2023-07-01")} />
+      <SunTime date={new Date("2023-010-01")} />
     </>
   );
 }
 
 function SunTime({ date }) {
-  const percentages = getPercentages(date);
-  const [time, setTime] = useState(null);
-  const [nextTime, setNextTime] = useState(null);
+  const [percentages, setPercentages] = useState(null);
+  const [songPercentages, setSongPercentages] = useState(null);
+  const [timeInfo, setTimeInfo] = useState(null);
+  const [songInfo, setSongInfo] = useState(null);
+
+  useEffect(() => {
+    const _percentages = getPercentages(date);
+    const _songPercentages = [];
+
+    let prev = 0;
+    let sum = 0;
+    _percentages.forEach((time) => {
+      const percent = prev + time.percent / 2;
+      _songPercentages.push({
+        name: time.name,
+        percent,
+      });
+      prev = time.percent / 2;
+      sum += percent;
+    });
+
+    const first = _percentages[0];
+    _songPercentages.push({
+      name: first.name,
+      percent: 1 - sum,
+    });
+
+    setPercentages(_percentages);
+    setSongPercentages(_songPercentages);
+  }, []);
+
+  const updateTimeInfo = (time, i) => {
+    const next = percentages[i + 1] || percentages[0];
+    setTimeInfo({
+      name: time.name,
+      percent: time.percent,
+      next: next,
+    });
+  };
+
+  const updateSongInfo = (time, i) => {
+    setSongInfo({
+      name: time.name,
+      percent: time.percent,
+    });
+  };
+
+  if (!percentages) return null;
 
   return (
     <div style={{ marginBottom: "32px" }}>
       <Info>
-        <span>Date: {date.toString()}</span>
-        <span>Phase: {time && `${time.name} - ${nextTime.name}`}</span>
-        <span>Percent: {time && (time?.percent * 100).toFixed(2)}</span>
+        <p>Date: {date.toString()}</p>
+        <span>
+          Phase: {timeInfo && `${timeInfo.name} - ${timeInfo.next.name}`}
+        </span>
+        <span>Percent: {timeInfo && (timeInfo?.percent * 100).toFixed(2)}</span>
       </Info>
-      <Bar>
-        {percentages.map((time, i) => (
-          <Time
-            onClick={() => {
-              setTime(time);
-              setNextTime(percentages[i + 1] || percentages[0]);
-            }}
-            onMouseEnter={() => {
-              setTime(time);
-              setNextTime(percentages[i + 1] || percentages[0]);
-            }}
-            percent={time.percent}
-            color={Phase[time.name]}
-          />
-        ))}
-      </Bar>
+      <Bars>
+        <TimeBar>
+          {percentages.map((time, i) => (
+            <Time
+              key={`time=${i}`}
+              onClick={() => updateTimeInfo(time, i)}
+              onMouseEnter={() => updateTimeInfo(time, i)}
+              percent={time.percent}
+              color={Phase[time.name]}
+            />
+          ))}
+        </TimeBar>
+        <Info>
+          <span>Song: {songInfo && songInfo.name}</span>
+          <span>
+            Percent: {songInfo && (songInfo?.percent * 100).toFixed(2)}
+          </span>
+        </Info>
+        <SongBar>
+          {songPercentages.map((time, i) => (
+            <Time
+              key={`song=${i}`}
+              onClick={() => updateSongInfo(time)}
+              onMouseEnter={() => updateSongInfo(time)}
+              percent={time.percent}
+              color={Phase[time.name]}
+            />
+          ))}
+        </SongBar>
+      </Bars>
     </div>
   );
 }
