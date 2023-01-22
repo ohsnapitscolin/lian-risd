@@ -130,14 +130,8 @@ export default class Sun {
       this.latitude
     );
 
-    this.currentPhases = this.sortSunTimes(times);
-    this.nextPhases = this.sortSunTimes(nextTimes);
-  }
-
-  sortSunTimes(sunTimes) {
-    return Object.entries(sunTimes)
-      .map(([key, value]) => ({ name: key, date: value }))
-      .sort((a, b) => a.date - b.date);
+    this.currentPhases = sortSunTimes(times);
+    this.nextPhases = sortSunTimes(nextTimes);
   }
 
   get date() {
@@ -152,4 +146,38 @@ export default class Sun {
     next.setDate(next.getDate() + 1);
     return next;
   }
+}
+
+function sortSunTimes(sunTimes) {
+  return Object.entries(sunTimes)
+    .map(([key, value]) => ({ name: key, date: value }))
+    .sort((a, b) => a.date - b.date);
+}
+
+export function getPercentages(date) {
+  const times = SunCalc.getTimes(date, 41.82399, -71.412834);
+  const sunTimes = sortSunTimes(times);
+
+  let sum = 0;
+  const percentages = [];
+  sunTimes.forEach(({ name, date }, i) => {
+    const nextTime = sunTimes[i + 1]?.date;
+    if (!nextTime) {
+      percentages.push({
+        name,
+        percent: 1 - sum,
+      });
+    } else {
+      const diff = nextTime - date;
+      const percent = diff / 86400000;
+      sum += percent;
+      percentages.push({
+        name,
+        percent,
+      });
+    }
+  });
+
+  console.log(percentages);
+  return percentages;
 }
