@@ -10,6 +10,8 @@ import Draggable from "react-draggable";
 import { Howl, Howler } from "howler";
 import unmute from "../vendor/unmute";
 
+import "../style/index.css";
+
 const BodyStyle = createGlobalStyle`
   body {
     color: white;

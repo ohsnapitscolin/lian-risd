@@ -2,6 +2,8 @@ import { getPercentages } from "../utils/suncalc";
 import React, { useState } from "react";
 import styled from "styled-components";
 
+import "../style/index.css";
+
 const Phase = {
   nightEnd: "07172C",
   nauticalDawn: "495A6F",
@@ -32,6 +34,10 @@ const Time = styled.button`
 
   padding: 0;
   border: none;
+
+  &:hover {
+    border: 0.5px solid #000;
+  }
 `;
 
 const Info = styled.div`
@@ -53,23 +59,31 @@ export default function SunTimes() {
 function SunTime({ date }) {
   const percentages = getPercentages(date);
   const [time, setTime] = useState(null);
+  const [nextTime, setNextTime] = useState(null);
 
   return (
-    <>
+    <div style={{ marginBottom: "32px" }}>
       <Info>
         <span>Date: {date.toString()}</span>
-        <span>Phase: {time?.name}</span>
+        <span>Phase: {time && `${time.name} - ${nextTime.name}`}</span>
         <span>Percent: {time && (time?.percent * 100).toFixed(2)}</span>
       </Info>
       <Bar>
-        {percentages.map((time) => (
+        {percentages.map((time, i) => (
           <Time
-            onClick={() => setTime(time)}
+            onClick={() => {
+              setTime(time);
+              setNextTime(percentages[i + 1] || percentages[0]);
+            }}
+            onMouseEnter={() => {
+              setTime(time);
+              setNextTime(percentages[i + 1] || percentages[0]);
+            }}
             percent={time.percent}
             color={Phase[time.name]}
           />
         ))}
       </Bar>
-    </>
+    </div>
   );
 }
