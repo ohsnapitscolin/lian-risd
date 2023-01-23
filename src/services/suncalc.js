@@ -19,7 +19,7 @@ const Phase = {
 
 const PrimaryPhases = ["nadir", "sunset", "sunrise", "solarNoon"];
 
-export default class Sun {
+class SunCalcService {
   moment = null;
 
   currentPhases = null;
@@ -28,19 +28,29 @@ export default class Sun {
   longitude = null;
   latitude = null;
   offset = 0;
-  interval = null;
+  initialized = false;
 
-  constructor(latitude, longitude, accelerant, date) {
-    this.latitude = latitude;
-    this.longitude = longitude;
+  async initialize(accelerant, date) {
     this.accelerant = accelerant;
     this.initialDate = date || new Date();
 
-    this.tick();
-  }
+    const coords = await new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position.coords),
+        () =>
+          resolve({
+            latitude: 41.82399,
+            longitude: -71.412834,
+          })
+      );
+    });
 
-  destruct() {
-    if (this.interval) clearInterval(this.interval);
+    this.latitude = coords.latitude;
+    this.longitude = coords.longitude;
+
+    this.tick();
+
+    this.initialized = true;
   }
 
   tick() {
@@ -126,8 +136,8 @@ export default class Sun {
     const times = SunCalc.getTimes(date, this.latitude, this.longitude);
     const nextTimes = SunCalc.getTimes(
       this.getNextDay(date),
-      this.longitude,
-      this.latitude
+      this.latitude,
+      this.longitude
     );
 
     this.currentPhases = sortSunTimes(times);
@@ -177,7 +187,8 @@ export function getPercentages(date) {
       });
     }
   });
-
-  console.log(percentages);
   return percentages;
 }
+
+const service = new SunCalcService();
+export default service;

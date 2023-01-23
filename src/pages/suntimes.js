@@ -1,5 +1,5 @@
-import { getPercentages } from "../utils/suncalc";
-import React, { useState, useRef, useEffect } from "react";
+import { getPercentages } from "../services/suncalc";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import "../style/index.css";
