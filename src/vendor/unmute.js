@@ -239,10 +239,14 @@ export default function unmute(
             channelTag.disableRemotePlayback = true; // Airplay like controls on other devices, prevents casting of the tag, doesn't work on modern iOS
             channelTag.preload = "auto";
             channelTag.src = silence;
+            channelTag.title = "Circadian Clock";
             channelTag.loop = true;
             channelTag.load();
             channelTag.addEventListener("pause", () => {
               Howler.mute(true);
+            });
+            channelTag.addEventListener("play", () => {
+              Howler.mute(false);
             });
           }
           // Play the channel tag
