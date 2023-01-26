@@ -1,3 +1,5 @@
+import { Howler } from "howler";
+
 /**
  * @file unmute.ts
  * @author Spencer Evans evans.spencer@gmail.com
@@ -239,6 +241,9 @@ export default function unmute(
             channelTag.src = silence;
             channelTag.loop = true;
             channelTag.load();
+            channelTag.addEventListener("pause", () => {
+              Howler.mute(true);
+            });
           }
           // Play the channel tag
           if (channelTag.paused) {
