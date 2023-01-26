@@ -5,8 +5,8 @@ import Sky from "../components/Sky";
 import Blinds from "../components/Blinds";
 import sunCalc from "../services/suncalc";
 import audio from "../services/audio";
-import Stars from "../components/Stars";
 import Draggable from "react-draggable";
+import { progress } from "../utils/math";
 
 import "../style/index.css";
 
@@ -65,23 +65,14 @@ const WindowContent = styled.div`
   z-index: -1;
 `;
 
-// const WindowShadow = styled.div`
-//   widthL 100%;
-//   height: 100%;
-//   position: absolute;
-//   left: 0;
-//   right: 0;
-//   top: 0;
-//   bottom: 0;
-//   margin: auto;
-//   box-shadow: inset -2px -2px 50px #ffffff, inset 12px 12px 15px black;
-// `;
-
-const Sun = styled.div`
+const Sun = styled.div.attrs((p) => ({
+  style: {
+    width: `${p.progress}%`,
+    paddingBottom: `${p.progress}%`,
+  },
+}))`
   height: 0;
-  width: 80%;
-  padding-bottom: 80%;
-  background: linear-gradient(360deg, rgba(255, 255, 255, 0) 0%, #fffbd2 100%);
+  background: linear-gradient(180deg, #f9ffac 0%, rgba(249, 255, 172, 0) 100%);
   border-radius: 50%;
   position: absolute;
   left: 0;
@@ -95,7 +86,7 @@ const DragContainer = styled.div`
   width: 100%;
   height: 200%;
   position: absolute;
-  left: 0;
+  bottom: 0;
   top: 50%;
   transform: translate(0, -50%);
   overflow: hidden;
@@ -110,22 +101,57 @@ const Overlay = styled.div`
   cursor: grab;
 `;
 
-const Content = styled.div`
+const Watts = styled.span`
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  color: inherit;
+`;
+
+const UI = styled.div`
+  color: ${(p) => p.color};
+  font-size: 18px;
+  transition: color 0.5s ease;
+`;
+
+const Mute = styled.button`
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  appearance: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: inherit;
+  color: inherit;
+`;
+
+const About = styled.button`
+  position: absolute;
+  bottom: 30px;
+  right: 40px;
+  appearance: none;
+  background: none;
+  border: 0;
+  font-size: inherit;
+  color: inherit;
+`;
+
+const Info = styled.p`
   position: absolute;
   top: 0;
-  left: 0;
+  left: 20px;
 `;
 
 export default function Circadian() {
   const [slide, setSlide] = useState(0);
-  const [date, setDate] = useState(new Date());
 
-  const [moment, setMoment] = useState(null);
-  const [momentProgress, setMomentProgress] = useState(null);
-  const [skyProgress, setSkyProgress] = useState(null);
-
+  const [moment, setMoment] = useState({});
   const [entered, setEntered] = useState(false);
+  const [muted, setMuted] = useState(false);
 
+  const prevHour = useRef();
   const requestRef = useRef();
 
   useEffect(() => {
@@ -135,13 +161,22 @@ export default function Circadian() {
     });
   }, []);
 
+  useEffect(() => {
+    console.log(moment.song);
+  }, [moment.song]);
+
+  useEffect(() => {
+    if (prevHour.current && moment.hour) {
+      audio.chime();
+    }
+    prevHour.current = moment.hour;
+  }, [moment.hour]);
+
   const tick = useCallback(() => {
-    if (!sunCalc.initialized) return;
-    sunCalc.tick();
-    setSkyProgress(sunCalc.getTotalProgress());
-    setMomentProgress(sunCalc.getMomentProgress());
-    setMoment(sunCalc.getMoment());
-    setDate(sunCalc.date);
+    if (sunCalc.initialized) {
+      sunCalc.tick();
+      setMoment(sunCalc.getMoment());
+    }
     requestRef.current = requestAnimationFrame(tick);
   });
 
@@ -159,15 +194,20 @@ export default function Circadian() {
     const height = e.target.getBoundingClientRect().height;
     const offset = height / 3;
     const percent = data.y / offset;
-    setSlide((1 - percent) * 100);
+    setSlide(percent * 100);
   };
 
   const handleEnter = () => {
     setEntered(true);
-    // audio.play("ambience");
-    // setTimeout(() => {
-    //   audio.fade("ambience", "meadow", 5000);
-    // }, 5000);
+    audio.play("ambience");
+    setTimeout(() => {
+      audio.fade("ambience", "meadow", 5000);
+    }, 5000);
+  };
+
+  const mute = () => {
+    audio.mute(!muted);
+    setMuted(!muted);
   };
 
   return (
@@ -176,23 +216,31 @@ export default function Circadian() {
       <Wall />
 
       {!entered && <button onClick={handleEnter}>Enter</button>}
-      {entered && (
+      {entered && moment.progress && (
         <>
           {/* <Light slide={slide} /> */}
-          <p>
-            {date.toString()} {Math.round(skyProgress, 2)}{" "}
-            {Math.round(momentProgress * 100, 2)} {moment?.current.name}{" "}
-            {moment?.next.name}
-          </p>
+          <Info>
+            {moment.date.toString()}
+            <br />
+            sky: {(moment.skyProgress * 100).toFixed(0)}%
+            <br />
+            day: {(moment.dayProgress * 100).toFixed(0)}%
+            <br />
+            moment: {moment.current.name} → {moment.next.name}{" "}
+            {Math.round(moment.progress * 100).toFixed(0)}%
+            <br />
+            song: {moment.song}
+            <br />
+            slide: {slide.toFixed(0)}%
+          </Info>
           <Window slide={slide}>
             <WindowContent>
-              <Sky progress={skyProgress} />
-              <Sun />
-              {/* <Stars /> */}
+              <Sky progress={moment.skyProgress} />
+              <Sun progress={progress(20, 80, moment.dayProgress, true)} />
               <Blinds
                 slide={slide}
                 moment={moment}
-                momentProgress={momentProgress}
+                momentProgress={moment.progress}
               />
             </WindowContent>
 
@@ -203,10 +251,15 @@ export default function Circadian() {
             </DragContainer>
           </Window>
 
-          {/* <Content>
+          <UI color={moment.ui}>
+            <Watts>{moment.watts.toFixed(0)} Watts</Watts>
+            <Mute onClick={mute}>Mute</Mute>
+            <About>About</About>
+          </UI>
+          {/* <UI>
             <button onClick={play}>Play</button>
             <button onClick={pause}>Pause</button>
-          </Content> */}
+          </UI> */}
         </>
       )}
     </>

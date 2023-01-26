@@ -1,22 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-
-const Phase = {
-  nightEnd: { from: [52, 72, 98], to: "#011D41" },
-  nauticalDawn: { from: [158, 162, 166], to: "#5B697B" },
-  dawn: { from: [181, 181, 181], to: "#AAACAE" },
-  sunrise: { from: [181, 181, 181], to: "#E1D9E1" },
-  sunriseEnd: { from: [181, 181, 181], to: "#8B9CA5" },
-  goldenHourEnd: { from: [181, 181, 181], to: "#C4D9D9" },
-  solarNoon: { from: [227, 230, 204], to: "#D6D9C2" },
-  goldenHour: { from: [227, 230, 204], to: "#CCD6C9" },
-  sunsetStart: { from: [181, 181, 181], to: "#F2F3E3" },
-  sunset: { from: [181, 181, 181], to: "#D9BECD" },
-  dusk: { from: [158, 162, 166], to: "#AB8E84" },
-  nauticalDusk: { from: [52, 72, 98], to: "#B1ADA9" },
-  night: { from: [52, 72, 98], to: "#354962" },
-  nadir: { from: [52, 72, 98], to: "#011D41" },
-};
+import { Phase } from "../services/suncalc";
+import { progress } from "../utils/math";
 
 const Grid = styled.div`
   width: 100%;
@@ -45,6 +30,16 @@ const Fill = styled.div`
   width: 100%;
 `;
 
+const Slide = styled.div`
+  position: absolute;
+  top: -10px;
+  right: 25px;
+  width: 5px;
+  height: ${(p) => p.slide}%;
+  border-radius: 3px;
+  background: linear-gradient(89.99deg, #ffffff 0.01%, #a0a0a0 99.99%);
+`;
+
 const BeforeBlind = styled(Fill).attrs((p) => ({
   style: {
     opacity: p.transition,
@@ -61,7 +56,7 @@ const AfterBlind = styled(Fill).attrs((p) => ({
 
 const Shade = styled(Fill).attrs((p) => ({
   style: {
-    opacity: p.slide / 400,
+    opacity: p.slide / 600,
   },
 }))`
   background-color: black;
@@ -91,18 +86,19 @@ export default function Blinds({ slide, moment, momentProgress }) {
             <Blind key={i}>
               <BeforeBlind
                 slide={slide}
-                phase={Phase[moment.current.name]}
+                phase={Phase[moment.current.name].blinds}
                 transition={1 - momentProgress}
               />
               <AfterBlind
                 slide={slide}
-                phase={Phase[moment.next.name]}
+                phase={Phase[moment.next.name].blinds}
                 transition={momentProgress}
               />
               <Shade slide={slide} />
             </Blind>
           ))}
       </Grid>
+      <Slide slide={progress(30, 80, slide / 100)} />
     </>
   );
 }

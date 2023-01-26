@@ -1,23 +1,95 @@
 import SunCalc from "suncalc";
+import { progress } from "../utils/math";
 
-const Phase = {
-  nightEnd: 3.8,
-  nauticalDawn: 7.06,
-  dawn: 10.2,
-  sunrise: 12.8,
-  sunriseEnd: 22,
-  goldenHourEnd: 32.2,
-  solarNoon: 43.3,
-  goldenHour: 55.4,
-  sunsetStart: 63.8,
-  sunset: 75.6,
-  dusk: 89.6,
-  nauticalDusk: 92.2,
-  night: 95.3,
-  nadir: 100,
+export const Phase = {
+  nightEnd: {
+    sky: 3.03,
+    blinds: { from: [37, 59, 88], to: "#011D41" },
+    watts: 125,
+    ui: "#F9FFAC",
+  },
+  nauticalDawn: {
+    sky: 6.95,
+    blinds: { from: [37, 59, 88], to: "#011D41" },
+    watts: 150,
+    ui: "#F9FFAC",
+  },
+  dawn: {
+    sky: 10.73,
+    blinds: { from: [170, 172, 174], to: "#675E67" },
+    watts: 175,
+    ui: "#F9FFAC",
+  },
+  sunrise: {
+    sky: 15.08,
+    blinds: { from: [182, 166, 151], to: "#AB8E84" },
+    watts: 200,
+    ui: "#5E5852",
+  },
+  sunriseEnd: {
+    sky: 21.78,
+    blinds: { from: [196, 206, 215], to: "#7C8999" },
+    watts: 225,
+    ui: "#5E5852",
+  },
+  goldenHourEnd: {
+    sky: 29.34,
+    blinds: { from: [245, 238, 219], to: "#D5C2AD" },
+    watts: 250,
+    ui: "#868686",
+  },
+  solarNoon: {
+    sky: 48.79,
+    blinds: { from: [242, 244, 227], to: "#E4E9C5" },
+    watts: 400,
+    ui: "#868686",
+  },
+  goldenHour: {
+    sky: 56.97,
+    blinds: { from: [245, 238, 219], to: "#D5C2AD" },
+    watts: 250,
+    ui: "#868686",
+  },
+  sunsetStart: {
+    sky: 63.73,
+    blinds: { from: [196, 206, 215], to: "#7C8999" },
+    watts: 225,
+    ui: "#868686",
+  },
+  sunset: {
+    sky: 73.68,
+    blinds: { from: [182, 166, 151], to: "#AB8E84" },
+    watts: 200,
+    ui: "#5E5852",
+  },
+  dusk: {
+    sky: 81.44,
+    blinds: { from: [170, 172, 174], to: "#675E67" },
+    watts: 175,
+    ui: "#5E5852",
+  },
+  nauticalDusk: {
+    sky: 86.8,
+    blinds: { from: [170, 172, 174], to: "#675E67" },
+    watts: 150,
+    ui: "#F9FFAC",
+  },
+  night: {
+    sky: 92.55,
+    blinds: { from: [37, 59, 88], to: "#011D41" },
+    watts: 125,
+    ui: "#F9FFAC",
+  },
+  nadir: {
+    sky: 100,
+    blinds: { from: [37, 59, 88], to: "#011D41" },
+    watts: 25,
+    ui: "#F9FFAC",
+  },
 };
 
-const PrimaryPhases = ["nadir", "sunset", "sunrise", "solarNoon"];
+// const PrimaryPhases = Object.keys(Phase);
+// const PrimaryPhases = ["nadir", "sunset", "sunrise", "solarNoon"];
 
 class SunCalcService {
   moment = null;
@@ -62,63 +134,94 @@ class SunCalcService {
 
   updateMoment() {
     if (!this.currentPhases) this.updatePhases();
-    if (this.moment && this.date < this.moment.next.date) {
-      return this.moment;
+
+    if (!this.moment || this.date >= this.moment.next.date) {
+      const date = this.date;
+      const allPhases = this.currentPhases.concat(this.nextPhases);
+
+      console.log(allPhases);
+
+      const index = allPhases.findIndex((_, i) => {
+        return allPhases[i]?.date <= date && allPhases[i + 1]?.date > date;
+      });
+
+      // const primaryPhases = allPhases.filter((p, i) =>
+      //   PrimaryPhases.includes(p.name)
+      // );
+      // const primaryIndex = primaryPhases.findIndex((_, i) => {
+      //   return (
+      //     primaryPhases[i]?.date <= date && primaryPhases[i + 1]?.date > date
+      //   );
+      // });
+
+      if (index < 0) {
+        throw new Error("What's happening!!!");
+      }
+
+      if (index >= this.currentPhases.length) {
+        this.updatePhases();
+      }
+
+      const current = allPhases[index];
+      const next = allPhases[index + 1];
+
+      this.moment = {
+        date: this.date,
+        current,
+        next,
+        // primary: {
+        //   current: primaryPhases[primaryIndex],
+        //   next: primaryPhases[primaryIndex + 1],
+        // },
+      };
     }
 
-    const date = this.date;
-    const allPhases = this.currentPhases.concat(this.nextPhases);
-
-    const index = allPhases.findIndex((_, i) => {
-      return allPhases[i]?.date <= date && allPhases[i + 1]?.date > date;
-    });
-
-    const primaryPhases = allPhases.filter((p, i) =>
-      PrimaryPhases.includes(p.name)
+    const { current, next } = this.moment;
+    const currPhase = Phase[current.name];
+    const nextPhase = Phase[next.name];
+    const momentProgress = this.getMomentProgress(current, next);
+    const watts = progress(
+      currPhase.watts,
+      nextPhase.watts,
+      this.getMomentProgress(current, next, momentProgress)
     );
-    const primaryIndex = primaryPhases.findIndex((_, i) => {
-      return (
-        primaryPhases[i]?.date <= date && primaryPhases[i + 1]?.date > date
-      );
-    });
 
-    if (index < 0) {
-      throw new Error("What's happening!!!");
-    }
-
-    if (index >= this.currentPhases.length) {
-      this.updatePhases();
-    }
-
-    const current = allPhases[index];
-    const next = allPhases[index + 1];
+    const song = momentProgress >= 0.5 ? next.name : current.name;
+    const hour = this.date.getHours();
 
     this.moment = {
+      date: this.date,
       current,
       next,
-      primary: {
-        current: primaryPhases[primaryIndex],
-        next: primaryPhases[primaryIndex + 1],
-      },
+      // primary: {
+      //   current: primaryPhases[primaryIndex],
+      //   next: primaryPhases[primaryIndex + 1],
+      // },
+      progress: momentProgress,
+      skyProgress: this.getSkyProgress(current, next),
+      dayProgress: this.getDayProgress(),
+      ui: currPhase.ui,
+      watts,
+      song,
+      hour,
     };
   }
 
-  getTotalProgress() {
-    const { primary } = this.moment;
-    const momentProgress = this.getPrimaryMomentProgress();
-
-    let currPercent = Phase[primary.current.name];
-    const nextPercent = Phase[primary.next.name];
-    if (nextPercent < currPercent) {
-      currPercent = 0;
-    }
-
-    return (nextPercent - currPercent) * momentProgress + currPercent;
+  getSkyProgress(current, next) {
+    const momentProgress = this.getMomentProgress(current, next);
+    let currPercent = Phase[current.name].sky;
+    const nextPercent = Phase[next.name].sky;
+    if (nextPercent < currPercent) currPercent = 0;
+    return ((nextPercent - currPercent) * momentProgress + currPercent) / 100;
   }
 
-  getMomentProgress() {
-    const { current, next } = this.moment;
+  getDayProgress() {
+    const allPhases = this.currentPhases.concat(this.nextPhases);
+    const primaryPhases = allPhases.filter((p, i) => p.name === "nadir");
+    return (this.date.getTime() - primaryPhases[0].date) / 86400000;
+  }
 
+  getMomentProgress(current, next) {
     return (this.date - current.date) / (next.date - current.date);
   }
 

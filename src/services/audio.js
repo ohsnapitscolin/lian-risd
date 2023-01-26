@@ -2,6 +2,7 @@ import { Howl, Howler } from "howler";
 import unmute from "../vendor/unmute";
 import ambience from "../audio/base.wav";
 import meadow from "../audio/meadow.wav";
+import bell from "../audio/hourbell_2_1.mp3";
 
 class AudioService {
   howls = {};
@@ -12,6 +13,7 @@ class AudioService {
   constructor() {
     this._addTrack("ambience", ambience, true, 0.25);
     this._addTrack("meadow", meadow, true);
+    this._addTrack("bell", bell, false);
   }
 
   initialize(onLoaded) {
@@ -47,8 +49,16 @@ class AudioService {
     this.howls[name].howl.play();
   }
 
+  mute(mute) {
+    Howler.mute(mute);
+  }
+
   volume(volume) {
     Howler.volume(volume);
+  }
+
+  chime() {
+    this.howls["bell"].howl.play();
   }
 
   fade(name1, name2, duration) {
