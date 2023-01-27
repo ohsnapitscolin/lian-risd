@@ -143,6 +143,7 @@ const UI = styled.div`
   color: ${(p) => p.color};
   font-size: 18px;
   transition: color 0.5s ease;
+  font-family: "MaisonNeue";
 `;
 
 const Mute = styled.button`

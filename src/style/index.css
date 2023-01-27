@@ -18,6 +18,11 @@
   src: url("../fonts/Plaid-S.otf") format("opentype");
 }
 
+@font-face {
+  font-family: "MaisonNeue";
+  src: url("../fonts/MaisonNeue-Book.otf") format("opentype");
+}
+
 html,
 body,
 #___gatsby,
