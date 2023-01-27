@@ -19,7 +19,6 @@ class AudioService {
   initialize(onLoaded) {
     this.onLoaded = onLoaded;
     this._checkLoaded();
-    unmute(Howler.ctx, true);
   }
 
   _handleLoad(name) {

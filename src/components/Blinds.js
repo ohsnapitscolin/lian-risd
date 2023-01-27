@@ -33,11 +33,11 @@ const Fill = styled.div`
 const Slide = styled.div`
   position: absolute;
   top: -10px;
-  right: 25px;
+  right: 8px;
   width: 5px;
   height: ${(p) => p.slide}%;
   border-radius: 3px;
-  background: linear-gradient(89.99deg, #ffffff 0.01%, #a0a0a0 99.99%);
+  background: linear-gradient(90deg, #ffffff 0%, #bababa 100%);
 `;
 
 const BeforeBlind = styled(Fill).attrs((p) => ({

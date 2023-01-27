@@ -7,6 +7,7 @@ import sunCalc from "../services/suncalc";
 import audio from "../services/audio";
 import Draggable from "react-draggable";
 import { progress } from "../utils/math";
+import Star from "../svg/star.svg";
 
 import "../style/index.css";
 
@@ -101,12 +102,41 @@ const Overlay = styled.div`
   cursor: grab;
 `;
 
-const Watts = styled.span`
+const Watts = styled.div`
   position: absolute;
   top: 30px;
   left: 50%;
   transform: translate(-50%, 0);
   color: inherit;
+
+  display: flex;
+  align-items: center;
+`;
+
+const WattsContent = styled.div`
+  position: relative;
+  span {
+    position: absolute;
+
+    &:nth-of-type(1) {
+      top: 50%;
+      transform: translate(0, -50%);
+      right: 100%;
+    }
+    &:nth-of-type(2) {
+      top: 50%;
+      transform: translate(0, -50%);
+      left: 100%;
+    }
+  }
+`;
+
+const WattsStar = styled(Star)`
+  path {
+    fill: ${(p) => p.color};
+    transition: path 0.5s ease;
+  }
+  margin: 0 5px;
 `;
 
 const UI = styled.div`
@@ -117,8 +147,8 @@ const UI = styled.div`
 
 const Mute = styled.button`
   position: absolute;
-  bottom: 30px;
-  left: 40px;
+  bottom: 25px;
+  left: 30px;
   appearance: none;
   background: none;
   border: 0;
@@ -129,8 +159,8 @@ const Mute = styled.button`
 
 const About = styled.button`
   position: absolute;
-  bottom: 30px;
-  right: 40px;
+  bottom: 25px;
+  right: 30px;
   appearance: none;
   background: none;
   border: 0;
@@ -185,8 +215,9 @@ export default function Circadian() {
     console.log(moment.song);
   }, [moment.song]);
 
+  const currHour = moment.hour ?? null;
   useEffect(() => {
-    if (prevHour.current && moment.hour) {
+    if (prevHour.current != null && currHour != null) {
       audio.chime();
     }
     prevHour.current = moment.hour;
@@ -210,6 +241,7 @@ export default function Circadian() {
   }, [slide]);
 
   const drag = (e, data) => {
+    if (typeof e.target.className !== "string") return;
     if (!e.target.className.includes("react-draggable")) return;
     const height = e.target.getBoundingClientRect().height;
     const offset = height / 3;
@@ -274,7 +306,13 @@ export default function Circadian() {
           </Window>
 
           <UI color={moment.ui}>
-            <Watts>{moment.watts.toFixed(0)} Watts</Watts>
+            <Watts>
+              <WattsContent>
+                <WattsStar color={moment.ui} />
+                <span>{moment.watts.toFixed(0)}</span>
+                <span>Watts</span>
+              </WattsContent>
+            </Watts>
             <Mute onClick={mute}>Mute</Mute>
             <About>About</About>
           </UI>
