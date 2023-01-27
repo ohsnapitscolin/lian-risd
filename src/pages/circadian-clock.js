@@ -150,12 +150,32 @@ export default function Circadian() {
   const [moment, setMoment] = useState({});
   const [entered, setEntered] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [info, setInfo] = useState(false);
 
   const prevHour = useRef();
   const requestRef = useRef();
 
-  useEffect(() => {
-    sunCalc.initialize(10000);
+  useEffect(async () => {
+    const params = new URLSearchParams(window.location.search);
+    let date = params.get("d");
+    let speed = params.get("s");
+    const latitude = params.get("lat");
+    const longitude = params.get("lon");
+
+    setInfo(params.get("i"));
+
+    let coords;
+    if (latitude && longitude) {
+      coords = {
+        latitude,
+        longitude,
+      };
+    }
+
+    if (date) date = new Date(date);
+    if (speed) speed = Number(speed);
+
+    sunCalc.initialize(speed, date, coords);
     audio.initialize(() => {
       console.log("audio loaded");
     });
@@ -219,20 +239,22 @@ export default function Circadian() {
       {entered && moment.progress && (
         <>
           {/* <Light slide={slide} /> */}
-          <Info>
-            {moment.date.toString()}
-            <br />
-            sky: {(moment.skyProgress * 100).toFixed(0)}%
-            <br />
-            day: {(moment.dayProgress * 100).toFixed(0)}%
-            <br />
-            moment: {moment.current.name} → {moment.next.name}{" "}
-            {Math.round(moment.progress * 100).toFixed(0)}%
-            <br />
-            song: {moment.song}
-            <br />
-            slide: {slide.toFixed(0)}%
-          </Info>
+          {info && (
+            <Info>
+              {moment.date.toString()}
+              <br />
+              sky: {(moment.skyProgress * 100).toFixed(0)}%
+              <br />
+              day: {(moment.dayProgress * 100).toFixed(0)}%
+              <br />
+              moment: {moment.current.name} → {moment.next.name}{" "}
+              {Math.round(moment.progress * 100).toFixed(0)}%
+              <br />
+              song: {moment.song}
+              <br />
+              slide: {slide.toFixed(0)}%
+            </Info>
+          )}
           <Window slide={slide}>
             <WindowContent>
               <Sky progress={moment.skyProgress} />

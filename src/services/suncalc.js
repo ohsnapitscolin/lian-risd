@@ -99,23 +99,27 @@ class SunCalcService {
 
   longitude = null;
   latitude = null;
+
   offset = 0;
   initialized = false;
 
-  async initialize(accelerant, date) {
-    this.accelerant = accelerant;
-    this.initialDate = date || new Date();
+  async initialize(speed, date, coords) {
+    this.speed = speed || 0;
+    if (!date) date = new Date();
+    this.offset = new Date().getTime() - date.getTime();
 
-    const coords = await new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => resolve(position.coords),
-        () =>
-          resolve({
-            latitude: 41.82399,
-            longitude: -71.412834,
-          })
-      );
-    });
+    if (!coords) {
+      coords = await new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position.coords),
+          () =>
+            resolve({
+              latitude: 41.82399,
+              longitude: -71.412834,
+            })
+        );
+      });
+    }
 
     this.latitude = coords.latitude;
     this.longitude = coords.longitude;
@@ -126,9 +130,7 @@ class SunCalcService {
   }
 
   tick() {
-    if (this.accelerant) {
-      this.offset += this.accelerant;
-    }
+    this.offset -= this.speed;
     this.updateMoment();
   }
 
@@ -248,10 +250,7 @@ class SunCalcService {
   }
 
   get date() {
-    if (this.offset) {
-      return new Date(this.initialDate.getTime() + this.offset);
-    }
-    return new Date();
+    return new Date(new Date().getTime() - this.offset);
   }
 
   getNextDay(date) {
