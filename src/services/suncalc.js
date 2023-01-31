@@ -1,7 +1,7 @@
 import SunCalc from "suncalc";
 import { progress } from "../utils/math";
 
-export const Transition = 500;
+export const Transition = 5000;
 
 export const Phase = {
   nightEnd: {
