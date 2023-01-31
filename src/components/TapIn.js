@@ -87,7 +87,7 @@ export default function TapIn({ hide, moment, slide, onBack }) {
   if (moment.progress < 0.1 || moment.progress > 0.9) {
     time = "at";
     name = moment.current.name;
-  } else if (moment.prgoress < 0.3) {
+  } else if (moment.progress < 0.3) {
     time = "just past";
     name = moment.current.name;
   } else {

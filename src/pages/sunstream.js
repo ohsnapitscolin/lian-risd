@@ -120,6 +120,7 @@ const UIButton = styled.button`
   appearance: none;
   background: none;
   border: 0;
+  padding: 0;
   cursor: pointer;
   z-index: 5;
 `;
@@ -154,9 +155,11 @@ const MuteButton = styled(UIButton)`
   position: absolute;
   bottom: 25px;
   left: 30px;
+  padding: 0;
 
   display: flex;
   align-item: flex-start;
+  height: 25px;
   width: 40px;
 
   svg {
@@ -164,8 +167,14 @@ const MuteButton = styled(UIButton)`
       fill: ${(p) => p.color};
       transition: fill: 0.5 ease;
     }
+    &:nth-of-type(1) {
+      width: 20px;
+      height: 20px;
+    }
     &:nth-of-type(2) {
-      margin-left: 5px;
+      height: 50%;
+      width: 10px;
+      height: 10px;
     }
   }
 `;
@@ -174,6 +183,7 @@ const AboutButton = styled(UIButton)`
   position: absolute;
   bottom: 25px;
   right: 30px;
+  padding: 0;
 `;
 
 const Info = styled.p`
@@ -220,6 +230,10 @@ const LandingContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  svg {
+    max-width: 60%;
+  }
 `;
 
 const About = styled.div`

@@ -34,9 +34,14 @@ const Hand = styled.div.attrs((p) => ({
 `;
 
 export default function Clock({ date }) {
-  const secondsAngle = (date.getSeconds() / 60) * 360;
-  const minutesAngle = (date.getMinutes() / 60) * 360;
-  const hourAngle = (date.getHours() / 12) * 360;
+  const ms = date.getMilliseconds();
+  const sec = date.getSeconds();
+  const min = date.getMinutes();
+  const hour = date.getHours();
+
+  const secondsAngle = (sec / 60 + ms / 60000) * 360;
+  const minutesAngle = (min / 60 + sec / 3600) * 360;
+  const hourAngle = (hour / 12 + min / 720) * 360;
 
   return (
     <Content>
