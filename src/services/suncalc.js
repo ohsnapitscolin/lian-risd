@@ -102,13 +102,13 @@ class SunCalcService {
   longitude = null;
   latitude = null;
 
-  offset = 0;
   initialized = false;
 
   async initialize(speed, date, coords) {
-    this.speed = speed || 0;
+    this.speed = speed || 1;
     if (!date) date = new Date();
-    this.offset = new Date().getTime() - date.getTime();
+    this.date = date;
+    this._cachedDate = new Date();
 
     if (!coords) {
       coords = await new Promise((resolve) => {
@@ -132,7 +132,11 @@ class SunCalcService {
   }
 
   tick() {
-    this.offset -= this.speed;
+    const currentDate = new Date();
+    const msDiff = new Date() - this._cachedDate;
+
+    this.date = new Date(this.date.getTime() + msDiff * this.speed);
+    this._cachedDate = currentDate;
     this.updateMoment();
   }
 
@@ -249,10 +253,6 @@ class SunCalcService {
 
     this.currentPhases = sortSunTimes(times);
     this.nextPhases = sortSunTimes(nextTimes);
-  }
-
-  get date() {
-    return new Date(new Date().getTime() - this.offset);
   }
 
   getNextDay(date) {

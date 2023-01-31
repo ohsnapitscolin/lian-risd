@@ -79,7 +79,7 @@ const TapInCopy = styled.p`
   margin: 0;
 `;
 
-export default function TapIn({ hide, moment, slide, onBack }) {
+export default function TapIn({ hide, moment, slide, onBack, speed }) {
   let time;
   let light;
   let name;
@@ -112,7 +112,7 @@ export default function TapIn({ hide, moment, slide, onBack }) {
         <TapInCopy>
           The Sun is {time} {name} and light is {light} your blinds.
         </TapInCopy>
-        <Clock date={moment.date} />
+        <Clock hide={hide} date={moment.date} speed={speed} />
         <TapInBack onClick={onBack} />
       </TapInContent>
     </TapInContainer>

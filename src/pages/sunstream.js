@@ -24,30 +24,6 @@ const BodyStyle = createGlobalStyle`
   }
 `;
 
-const Wall = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-  background-color: #f6f7ef;
-  opacity: 1;
-  z-index: -2;
-`;
-
-const Light = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-  background-color: #011d41;
-  opacity: ${({ slide }) => slide / 100};
-  z-index: -1;
-`;
-
 const Window = styled.div`
   width: 100%;
   height: 100%;
@@ -57,11 +33,8 @@ const Window = styled.div`
   top: 0;
   bottom: 0;
   margin: auto;
-  // box-shadow: 0 0 ${(p) => 100 - p.slide}px ${(p) =>
-    100 - p.slide}px #fffbd2;
 
   z-index: 1;
-  // border-radius: 16px;
   overflow: hidden;
 `;
 
@@ -288,6 +261,7 @@ const View = {
 export default function SunStream() {
   const [slide, setSlide] = useState(0);
 
+  const [speed, setSpeed] = useState(1);
   const [moment, setMoment] = useState({});
   const [view, setView] = useState(View.Landing);
   const [muted, setMuted] = useState(false);
@@ -296,7 +270,7 @@ export default function SunStream() {
   const prevHour = useRef();
   const requestRef = useRef();
 
-  useEffect(async () => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     let date = params.get("d");
     let speed = params.get("s");
@@ -315,6 +289,7 @@ export default function SunStream() {
 
     if (date) date = new Date(date);
     if (speed) speed = Number(speed);
+    setSpeed(speed);
 
     sunCalc.initialize(speed, date, coords);
     audio.initialize(() => {
@@ -326,8 +301,8 @@ export default function SunStream() {
     console.log(moment.song);
   }, [moment.song]);
 
-  const currHour = moment.hour ?? null;
   useEffect(() => {
+    const currHour = moment.hour ?? null;
     if (prevHour.current != null && currHour != null) {
       audio.chime();
     }
@@ -340,7 +315,7 @@ export default function SunStream() {
       setMoment(sunCalc.getMoment());
     }
     requestRef.current = requestAnimationFrame(tick);
-  });
+  }, []);
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(tick);
@@ -389,11 +364,9 @@ export default function SunStream() {
   return (
     <>
       <BodyStyle />
-      <Wall />
 
       {moment.progress && (
         <>
-          {/* <Light slide={slide} /> */}
           {info && (
             <Info>
               {moment.date.toString()}
@@ -424,7 +397,7 @@ export default function SunStream() {
             </LandingContent>
           </LandingContainer>
 
-          <Window slide={slide}>
+          <Window>
             <WindowContent>
               <Sky progress={moment.skyProgress} />
               <Sun
@@ -462,6 +435,7 @@ export default function SunStream() {
             hide={!isTapIn}
             moment={moment}
             slide={slide}
+            speed={speed}
             onBack={() => setView(View.Resting)}
           />
 
