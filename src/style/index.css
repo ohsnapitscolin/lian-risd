@@ -37,4 +37,6 @@ body {
   background-color: #ede6d3;
   font-family: Arial !important;
   box-sizing: border-box;
+
+  -webkit-tap-highlight-color: transparent;
 }

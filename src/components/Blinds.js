@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Phase } from "../services/suncalc";
 import { progress } from "../utils/math";
 
+import { Transition } from "../services/suncalc";
+
 const Grid = styled.div`
   width: 100%;
   height: 100%;
@@ -14,6 +16,9 @@ const Grid = styled.div`
   margin: auto;
   display: grid;
   grid-template-row: repeat(5, 1fr);
+
+  opacity: ${({ hide }) => (hide ? 0 : 1)};
+  transition: opacity ${Transition}ms;
 `;
 
 const Blind = styled.div`
@@ -38,6 +43,9 @@ const Slide = styled.div`
   height: ${(p) => p.slide}%;
   border-radius: 3px;
   background: linear-gradient(90deg, #ffffff 0%, #bababa 100%);
+
+  opacity: ${({ hide }) => (hide ? 0 : 1)};
+  transition: opacity ${Transition}ms;
 `;
 
 const BeforeBlind = styled(Fill).attrs((p) => ({
@@ -74,12 +82,12 @@ function getGradient(from, to, slide) {
   `;
 }
 
-export default function Blinds({ slide, moment, momentProgress }) {
+export default function Blinds({ slide, moment, momentProgress, hide }) {
   if (!moment) return null;
 
   return (
     <>
-      <Grid slide={slide}>
+      <Grid hide={hide} slide={slide}>
         {Array(5)
           .fill(0)
           .map((_, i) => (
@@ -98,7 +106,7 @@ export default function Blinds({ slide, moment, momentProgress }) {
             </Blind>
           ))}
       </Grid>
-      <Slide slide={progress(30, 80, slide / 100)} />
+      <Slide hide={hide} slide={progress(30, 80, slide / 100)} />
     </>
   );
 }
