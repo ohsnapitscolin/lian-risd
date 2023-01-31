@@ -193,7 +193,7 @@ const Landing = styled.div`
   width: 120%;
   height: 120%;
   background: linear-gradient(180deg, #867e73 0%, #4a4b49 100%);
-  filter: blur(50px);
+  filter: blur(30px);
 `;
 
 const LandingContent = styled.div`

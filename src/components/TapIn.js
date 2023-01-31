@@ -29,7 +29,7 @@ const TapInBackgroundWrapper = styled.div`
   width: 120%;
   height: 120%;
 
-  filter: blur(50px);
+  filter: blur(30px);
 `;
 
 const TapInBackground = styled.div`
