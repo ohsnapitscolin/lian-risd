@@ -1,23 +1,26 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 
-import Sky from "../components/Sky";
-import Blinds from "../components/Blinds";
-import sunCalc, { Transition } from "../services/suncalc";
+import { Transition } from "../services/suncalc";
 import audio from "../services/audio";
-import Draggable from "react-draggable";
-import MusicIcon from "../svg/music-icon.svg";
-import MuteIcon from "../svg/mute-icon.svg";
-import SunStreamIcon from "../svg/sun-stream.svg";
-import WOutline from "../svg/w-outline.svg";
 
-import TapIn from "../components/TapIn";
+import Draggable from "react-draggable";
+import SunStreamIcon from "../svg/sun-stream.svg";
+
+import Sky from "../components/suncalc/Sky";
+import Blinds from "../components/suncalc/Blinds";
+import UI from "../components/suncalc/UI";
+import TapIn from "../components/suncalc/TapIn";
+import Info from "../components/suncalc/Info";
+
+import { useInitialize, useSong, useHour } from "../hooks/suncalc";
 
 import "../style/index.css";
 
 const BodyStyle = createGlobalStyle`
   body {
     color: white;
+    font-size: 17px;
     font-family: "Superstudio" !important;
     background-color: black !important;
     padding: 0 !important;
@@ -78,88 +81,6 @@ const Overlay = styled.div`
   top: 0;
   left: 0;
   cursor: grab;
-`;
-
-const UIButton = styled.button`
-  color: ${(p) => p.color};
-  font-size: 18px;
-  font-family: "Superstudio";
-
-  opacity: ${({ hide }) => (hide ? 0 : 1)};
-  transition: color 0.5s ease, opacity ${Transition}ms;
-  appearance: none;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  z-index: 5;
-`;
-
-const Watts = styled(UIButton)`
-  z-index: 5;
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  transform: translate(-50%, 0);
-  color: ${(p) => p.color};
-
-  width: 60px;
-  height: 60px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    & > * {
-      stroke: ${(p) => p.color};
-      transition: stroke: 0.5 ease;
-    }
-  }
-`;
-
-const MuteButton = styled(UIButton)`
-  position: absolute;
-  bottom: 25px;
-  left: 30px;
-  padding: 0;
-
-  display: flex;
-  align-item: flex-start;
-  height: 25px;
-  width: 40px;
-
-  svg {
-    path {
-      fill: ${(p) => p.color};
-      transition: fill: 0.5 ease;
-    }
-    &:nth-of-type(1) {
-      width: 20px;
-      height: 20px;
-    }
-    &:nth-of-type(2) {
-      height: 50%;
-      width: 10px;
-      height: 10px;
-    }
-  }
-`;
-
-const AboutButton = styled(UIButton)`
-  position: absolute;
-  bottom: 25px;
-  right: 30px;
-  padding: 0;
-`;
-
-const Info = styled.p`
-  position: absolute;
-  top: 0;
-  left: 20px;
 `;
 
 const LandingContainer = styled.div`
@@ -265,66 +186,28 @@ const View = {
 export default function SunStream() {
   const [slide, setSlide] = useState(0);
 
-  const [speed, setSpeed] = useState(1);
-  const [moment, setMoment] = useState({});
   const [view, setView] = useState(View.Landing);
   const [muted, setMuted] = useState(false);
-  const [info, setInfo] = useState(false);
 
   const prevHour = useRef();
-  const requestRef = useRef();
+  const moment = {};
+
+  useInitialize();
+
+  const song = useSong();
+  const hour = useHour();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    let date = params.get("d");
-    let speed = params.get("s") || 1;
-    const latitude = params.get("lat");
-    const longitude = params.get("lon");
-
-    setInfo(params.get("i"));
-
-    let coords;
-    if (latitude && longitude) {
-      coords = {
-        latitude,
-        longitude,
-      };
-    }
-
-    if (date) date = new Date(date);
-    if (speed) speed = Number(speed);
-    setSpeed(speed);
-
-    sunCalc.initialize(speed, date, coords);
-    audio.initialize(() => {
-      console.log("audio loaded");
-    });
-  }, []);
+    console.log(song);
+  }, [song]);
 
   useEffect(() => {
-    console.log(moment.song);
-  }, [moment.song]);
-
-  useEffect(() => {
-    const currHour = moment.hour ?? null;
+    const currHour = hour ?? null;
     if (prevHour.current != null && currHour != null) {
       audio.chime();
     }
-    prevHour.current = moment.hour;
-  }, [moment.hour]);
-
-  const tick = useCallback(() => {
-    if (sunCalc.initialized) {
-      sunCalc.tick();
-      setMoment(sunCalc.getMoment());
-    }
-    requestRef.current = requestAnimationFrame(tick);
-  }, []);
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, [tick]); // Make sure the effect runs only once
+    prevHour.current = hour;
+  }, [hour]);
 
   useEffect(() => {
     audio.volume(1 - slide / 100);
@@ -341,9 +224,10 @@ export default function SunStream() {
 
   const startResting = () => {
     setView(View.Resting);
-    audio.play("ambience");
+    audio.play("base");
+    // audio.play("nightLoop");
     setTimeout(() => {
-      audio.fade("ambience", "meadow", 5000);
+      audio.fade("base", "meadow", 5000);
     }, 5000);
   };
 
@@ -369,108 +253,81 @@ export default function SunStream() {
     <>
       <BodyStyle />
 
-      {moment.progress && (
-        <>
-          {info && (
-            <Info>
-              {moment.date.toString()}
-              <br />
-              sky: {(moment.skyProgress * 100).toFixed(0)}%
-              <br />
-              day: {(moment.dayProgress * 100).toFixed(0)}%
-              <br />
-              moment: {moment.current.name} → {moment.next.name}{" "}
-              {Math.round(moment.progress * 100).toFixed(0)}%
-              <br />
-              song: {moment.song}
-              <br />
-              slide: {slide.toFixed(0)}%
-            </Info>
-          )}
+      <LandingContainer
+        hide={!isLanding}
+        className={!isLanding ? "hide" : ""}
+        onClick={isLanding ? startResting : null}
+      >
+        <Landing>
+          <Sun />
+        </Landing>
+        <LandingContent>
+          <SunStreamIcon />
+          <span>Tap to listen</span>
+        </LandingContent>
+      </LandingContainer>
 
-          <LandingContainer
-            hide={!isLanding}
-            className={!isLanding ? "hide" : ""}
-            onClick={isLanding ? startResting : null}
-          >
-            <Landing>
-              <Sun />
-            </Landing>
-            <LandingContent>
-              <SunStreamIcon />
-              <span>Tap to listen</span>
-            </LandingContent>
-          </LandingContainer>
+      <Info slide={slide} />
 
-          <Window>
-            <WindowContent>
-              <Sky progress={moment.skyProgress} />
-              <Sun hide={isLanding || isTapIn} />
-              <Blinds
-                hide={!isResting}
-                slide={slide}
-                moment={moment}
-                momentProgress={moment.progress}
-              />
-            </WindowContent>
-
-            <DragContainer>
-              <Draggable name="drag" axis={"y"} bounds="parent" onDrag={drag}>
-                <Overlay />
-              </Draggable>
-            </DragContainer>
-          </Window>
-
-          <Watts onClick={setTapIn} hide={!isResting} color={moment.ui.color}>
-            <WOutline />
-            <span>{moment.watts.toFixed(0)}W</span>
-          </Watts>
-          <MuteButton hide={!isResting} color={moment.ui.color} onClick={mute}>
-            <MusicIcon />
-            {muted && <MuteIcon />}
-          </MuteButton>
-          <AboutButton
+      <Window>
+        <WindowContent>
+          <Sky />
+          <Sun hide={isLanding || isTapIn} />
+          <Blinds
             hide={!isResting}
-            color={moment.ui.color}
-            onClick={setAbout}
-          >
-            About
-          </AboutButton>
-
-          <TapIn
-            hide={!isTapIn}
-            moment={moment}
             slide={slide}
-            speed={speed}
-            onBack={() => setView(View.Resting)}
+            moment={moment}
+            momentProgress={moment?.progress}
           />
+        </WindowContent>
 
-          <About hide={!isAbout} className={!isAbout ? "hide" : ""}>
-            <AboutContent>
-              <p>
-                Sun Stream is a digital clock in the form of a 24-hour song that
-                changes based on the amount of a visitor’s available light.
-              </p>
-              <p>
-                Loosely based on the concept of Circadian Rhythms, 14 sun
-                positions correspond to a selection of curated sound loops, with
-                added encounters— each listening experience constantly evolving.
-              </p>
-              <p>
-                Bells softly mark the passage of hours. Sun Stream was made over
-                many moons by Lian Fumerton-Liu, Sam Kotrba, and Colin Dunn.
-              </p>
-              <span>Design: Lian Fumerton-Liu</span>
-              <span>Sound: Sam Kotrba</span>
-              <span>Development: Colin Dunn</span>
-              <span>Words set in Superstudio by Lineto.</span>
-              <span>v1.0</span>
-              <span>© 2023</span>
-            </AboutContent>
-            <AboutBack onClick={() => setView(View.Resting)} />
-          </About>
-        </>
-      )}
+        <DragContainer>
+          <Draggable name="drag" axis={"y"} bounds="parent" onDrag={drag}>
+            <Overlay />
+          </Draggable>
+        </DragContainer>
+      </Window>
+
+      <TapIn
+        hide={!isTapIn}
+        slide={slide}
+        onBack={() => setView(View.Resting)}
+      />
+
+      <UI
+        hide={!isResting}
+        setAbout={setAbout}
+        setTapIn={setTapIn}
+        mute={mute}
+        muted={muted}
+      />
+
+      <About hide={!isAbout} className={!isAbout ? "hide" : ""}>
+        <AboutContent>
+          <p>
+            Sun Stream is a digital clock in the form of a 24-hour song that
+            changes based on the amount of a visitor’s available light.
+          </p>
+          <p>
+            Loosely based on the concept of Circadian Rhythms, 14 sun positions
+            correspond to a selection of curated sound loops, with added
+            encounters— each listening experience constantly evolving.
+          </p>
+          <p>
+            Bells softly mark the passage of hours. Sun Stream was made over
+            many moons by Lian Fumerton-Liu, Sam Kotrba, and Colin Dunn.
+          </p>
+          <span>Design: Lian Fumerton-Liu</span>
+          <span>Sound: Sam Kotrba</span>
+          <span>Development: Colin Dunn</span>
+          <span>Words set in Superstudio by Lineto.</span>
+          <span>v1.0</span>
+          <span>© 2023</span>
+        </AboutContent>
+        <AboutBack onClick={() => setView(View.Resting)} />
+      </About>
+      {/* </>
+      // )} */}
     </>
   );
 }

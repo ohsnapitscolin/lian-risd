@@ -1,8 +1,11 @@
 import { Howl, Howler } from "howler";
-import unmute from "../vendor/unmute";
-import ambience from "../audio/base.wav";
+
+import baselayer from "../audio/baselayer.wav";
 import meadow from "../audio/meadow.wav";
-import bell from "../audio/hourbell_2_1.mp3";
+import nightLoop from "../audio/night_loop_1.wav";
+import bell from "../audio/hourbell_3_2.wav";
+
+// import unmute from "../vendor/unmute";
 
 class AudioService {
   howls = {};
@@ -11,8 +14,9 @@ class AudioService {
   onLoaded = null;
 
   constructor() {
-    this._addTrack("ambience", ambience, true, 0.25);
+    this._addTrack("base", baselayer, true, 0.1);
     this._addTrack("meadow", meadow, true);
+    this._addTrack("nightLoop", nightLoop, true);
     this._addTrack("bell", bell, false);
   }
 

@@ -1,5 +1,6 @@
 import SunCalc from "suncalc";
 import { progress } from "../utils/math";
+import { Subject } from "rxjs";
 
 export const Transition = 500;
 
@@ -115,9 +116,6 @@ export const Phase = {
   },
 };
 
-// const PrimaryPhases = Object.keys(Phase);
-// const PrimaryPhases = ["nadir", "sunset", "sunrise", "solarNoon"];
-
 class SunCalcService {
   moment = null;
 
@@ -128,6 +126,8 @@ class SunCalcService {
   latitude = null;
 
   initialized = false;
+
+  momentSubject = new Subject();
 
   async initialize(speed, date, coords) {
     this.speed = speed || 1;
@@ -163,6 +163,7 @@ class SunCalcService {
     this.date = new Date(this.date.getTime() + msDiff * this.speed);
     this._cachedDate = currentDate;
     this.updateMoment();
+    this.momentSubject.next(this.moment);
   }
 
   updateMoment() {
@@ -172,20 +173,9 @@ class SunCalcService {
       const date = this.date;
       const allPhases = this.currentPhases.concat(this.nextPhases);
 
-      console.log(allPhases);
-
       const index = allPhases.findIndex((_, i) => {
         return allPhases[i]?.date <= date && allPhases[i + 1]?.date > date;
       });
-
-      // const primaryPhases = allPhases.filter((p, i) =>
-      //   PrimaryPhases.includes(p.name)
-      // );
-      // const primaryIndex = primaryPhases.findIndex((_, i) => {
-      //   return (
-      //     primaryPhases[i]?.date <= date && primaryPhases[i + 1]?.date > date
-      //   );
-      // });
 
       if (index < 0) {
         throw new Error("What's happening!!!");
@@ -202,10 +192,6 @@ class SunCalcService {
         date: this.date,
         current,
         next,
-        // primary: {
-        //   current: primaryPhases[primaryIndex],
-        //   next: primaryPhases[primaryIndex + 1],
-        // },
       };
     }
 
@@ -226,10 +212,6 @@ class SunCalcService {
       date: this.date,
       current,
       next,
-      // primary: {
-      //   current: primaryPhases[primaryIndex],
-      //   next: primaryPhases[primaryIndex + 1],
-      // },
       progress: momentProgress,
       skyProgress: this.getSkyProgress(current, next),
       dayProgress: this.getDayProgress(),

@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Clock from "./Clock";
 import { Transition, Phase } from "../../services/suncalc";
+import { useProgress, usePhases, useUI } from "../../hooks/suncalc";
 
 const TapInContainer = styled.div`
   position: absolute;
@@ -32,13 +33,16 @@ const TapInBackgroundWrapper = styled.div`
   filter: blur(30px);
 `;
 
-const TapInBackground = styled.div`
+const TapInBackground = styled.div.attrs((p) => ({
+  style: {
+    background: p.ui.background,
+  },
+}))`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, #867e73 0%, #4a4b49 100%);
   mask-image: radial-gradient(
     circle at center,
     transparent 0%,
@@ -48,7 +52,11 @@ const TapInBackground = styled.div`
   );
 `;
 
-const TapInContent = styled.div`
+const TapInContent = styled.div.attrs((p) => ({
+  style: {
+    color: p.ui.color,
+  },
+}))`
   width: 100%;
   height: 100%;
   display: flex;
@@ -84,15 +92,24 @@ export default function TapIn({ hide, moment, slide, onBack, speed }) {
   let light;
   let name;
 
-  if (moment.progress < 0.1 || moment.progress > 0.9) {
+  const progress = useProgress();
+  const { current, next } = usePhases();
+  const ui = useUI();
+
+  if (!progress || !current || !next || !ui) return null;
+
+  if (progress < 0.1) {
     time = "at";
-    name = moment.current.name;
-  } else if (moment.progress < 0.3) {
+    name = current.displayName;
+  } else if (progress > 0.9) {
+    time = "at";
+    name = next.displayName;
+  } else if (progress < 0.3) {
     time = "just past";
-    name = moment.current.name;
+    name = current.displayName;
   } else {
     time = "approaching";
-    name = moment.next.name;
+    name = next.displayName;
   }
 
   if (slide < 0.33) {
@@ -103,19 +120,16 @@ export default function TapIn({ hide, moment, slide, onBack, speed }) {
     light = "hidden behind";
   }
 
-  console.log(moment.next);
-  console.log(moment.current);
-
   return (
     <TapInContainer hide={hide} className={hide ? "hide" : ""}>
       <TapInBackgroundWrapper>
-        <TapInBackground hide={hide} className={hide ? "hide" : ""} />
+        <TapInBackground ui={ui} hide={hide} className={hide ? "hide" : ""} />
       </TapInBackgroundWrapper>
-      <TapInContent>
+      <TapInContent ui={ui}>
         <TapInCopy>
           The Sun is {time} {name} and light is {light} your blinds.
         </TapInCopy>
-        <Clock hide={hide} speed={speed} />
+        <Clock hide={hide} />
         <TapInBack onClick={onBack} />
       </TapInContent>
     </TapInContainer>
