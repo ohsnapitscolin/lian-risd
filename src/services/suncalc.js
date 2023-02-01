@@ -1,92 +1,117 @@
 import SunCalc from "suncalc";
 import { progress } from "../utils/math";
 
-export const Transition = 5000;
+export const Transition = 500;
+
+export const UI = {
+  light: {
+    color: "#4F4F4C",
+    background: "linear-gradient(180deg, #B0ACA6 0%, #837C71 100%)",
+  },
+  dark: {
+    color: "white",
+    background: "linear-gradient(180deg, #867E73 0%, #4A4B49 100%)",
+  },
+};
 
 export const Phase = {
   nightEnd: {
     sky: 3.03,
     blinds: { from: [37, 59, 88], to: "#011D41" },
     watts: 125,
-    ui: "#F9FFAC",
+    ui: "dark",
+    displayName: "Astronomical Dawn",
   },
   nauticalDawn: {
     sky: 6.95,
     blinds: { from: [37, 59, 88], to: "#011D41" },
     watts: 150,
-    ui: "#F9FFAC",
+    ui: "dark",
+    displayName: "Nautical Dawn",
   },
   dawn: {
     sky: 10.73,
     blinds: { from: [170, 172, 174], to: "#675E67" },
     watts: 175,
-    ui: "#F9FFAC",
+    ui: "dark",
+    displayName: "Civil Dawn",
   },
   sunrise: {
     sky: 15.08,
     blinds: { from: [182, 166, 151], to: "#AB8E84" },
     watts: 200,
-    ui: "#5E5852",
+    ui: "light",
+    displayName: "Sunrise",
   },
   sunriseEnd: {
     sky: 21.78,
     blinds: { from: [196, 206, 215], to: "#7C8999" },
     watts: 225,
-    ui: "#5E5852",
+    ui: "light",
+    displayName: "Sunrise End",
   },
   goldenHourEnd: {
     sky: 29.34,
     blinds: { from: [245, 238, 219], to: "#D5C2AD" },
     watts: 250,
-    ui: "#868686",
+    ui: "light",
+    displayName: "Morning Golden Hour",
   },
   solarNoon: {
     sky: 48.79,
     blinds: { from: [242, 244, 227], to: "#E4E9C5" },
     watts: 400,
-    ui: "#868686",
+    ui: "light",
+    displayName: "Solar Noon",
   },
   goldenHour: {
     sky: 56.97,
     blinds: { from: [245, 238, 219], to: "#D5C2AD" },
     watts: 250,
-    ui: "#868686",
+    ui: "light",
+    displayName: "Golden Hour",
   },
   sunsetStart: {
     sky: 63.73,
     blinds: { from: [196, 206, 215], to: "#7C8999" },
     watts: 225,
-    ui: "#868686",
+    ui: "light",
+    displayName: "Sunset",
   },
   sunset: {
     sky: 73.68,
     blinds: { from: [182, 166, 151], to: "#AB8E84" },
     watts: 200,
-    ui: "#5E5852",
+    ui: "dark",
+    displayName: "Sunset End",
   },
   dusk: {
     sky: 81.44,
     blinds: { from: [170, 172, 174], to: "#675E67" },
     watts: 175,
-    ui: "#5E5852",
+    ui: "dark",
+    displayName: "Civil Dusk",
   },
   nauticalDusk: {
     sky: 86.8,
     blinds: { from: [170, 172, 174], to: "#675E67" },
     watts: 150,
-    ui: "#F9FFAC",
+    ui: "dark",
+    displayName: "Nautical Dusk",
   },
   night: {
     sky: 92.55,
     blinds: { from: [37, 59, 88], to: "#011D41" },
     watts: 125,
-    ui: "#F9FFAC",
+    ui: "dark",
+    displayName: "Astronomical Dusk",
   },
   nadir: {
     sky: 100,
     blinds: { from: [37, 59, 88], to: "#011D41" },
     watts: 25,
-    ui: "#F9FFAC",
+    ui: "dark",
+    displayName: "Nadir",
   },
 };
 
@@ -208,7 +233,7 @@ class SunCalcService {
       progress: momentProgress,
       skyProgress: this.getSkyProgress(current, next),
       dayProgress: this.getDayProgress(),
-      ui: currPhase.ui,
+      ui: UI[currPhase.ui],
       watts,
       song,
       hour,

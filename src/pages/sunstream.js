@@ -6,7 +6,6 @@ import Blinds from "../components/Blinds";
 import sunCalc, { Transition } from "../services/suncalc";
 import audio from "../services/audio";
 import Draggable from "react-draggable";
-import { progress } from "../utils/math";
 import MusicIcon from "../svg/music-icon.svg";
 import MuteIcon from "../svg/mute-icon.svg";
 import SunStreamIcon from "../svg/sun-stream.svg";
@@ -19,6 +18,7 @@ import "../style/index.css";
 const BodyStyle = createGlobalStyle`
   body {
     color: white;
+    font-family: "Superstudio" !important;
     background-color: black !important;
     padding: 0 !important;
   }
@@ -45,13 +45,10 @@ const WindowContent = styled.div`
   z-index: -1;
 `;
 
-const Sun = styled.div.attrs((p) => ({
-  style: {
-    width: `${p.progress}%`,
-    paddingBottom: `${p.progress}%`,
-  },
-}))`
+const Sun = styled.div`
   height: 0;
+  width: 330px;
+  padding-bottom: 330px;
   background: linear-gradient(180deg, #f9ffac 0%, rgba(249, 255, 172, 0) 100%);
   border-radius: 50%;
   position: absolute;
@@ -86,7 +83,7 @@ const Overlay = styled.div`
 const UIButton = styled.button`
   color: ${(p) => p.color};
   font-size: 18px;
-  font-family: "MaisonNeue";
+  font-family: "Superstudio";
 
   opacity: ${({ hide }) => (hide ? 0 : 1)};
   transition: color 0.5s ease, opacity ${Transition}ms;
@@ -192,7 +189,7 @@ const Landing = styled.div`
   left: -10%;
   width: 120%;
   height: 120%;
-  background: linear-gradient(180deg, #867e73 0%, #4a4b49 100%);
+  background: linear-gradient(180deg, #b0aca6 0%, #837c71 100%);
   filter: blur(30px);
 `;
 
@@ -206,6 +203,13 @@ const LandingContent = styled.div`
 
   svg {
     max-width: 60%;
+  }
+
+  span {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translate(-50%, 0);
   }
 `;
 
@@ -273,7 +277,7 @@ export default function SunStream() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     let date = params.get("d");
-    let speed = params.get("s");
+    let speed = params.get("s") || 1;
     const latitude = params.get("lat");
     const longitude = params.get("lon");
 
@@ -390,20 +394,18 @@ export default function SunStream() {
             onClick={isLanding ? startResting : null}
           >
             <Landing>
-              <Sun progress={progress(20, 80, moment.dayProgress, true)} />
+              <Sun />
             </Landing>
             <LandingContent>
               <SunStreamIcon />
+              <span>Tap to listen</span>
             </LandingContent>
           </LandingContainer>
 
           <Window>
             <WindowContent>
               <Sky progress={moment.skyProgress} />
-              <Sun
-                hide={isLanding || isTapIn}
-                progress={progress(20, 80, moment.dayProgress, true)}
-              />
+              <Sun hide={isLanding || isTapIn} />
               <Blinds
                 hide={!isResting}
                 slide={slide}
@@ -419,15 +421,19 @@ export default function SunStream() {
             </DragContainer>
           </Window>
 
-          <Watts onClick={setTapIn} hide={!isResting} color={moment.ui}>
+          <Watts onClick={setTapIn} hide={!isResting} color={moment.ui.color}>
             <WOutline />
             <span>{moment.watts.toFixed(0)}W</span>
           </Watts>
-          <MuteButton hide={!isResting} color={moment.ui} onClick={mute}>
+          <MuteButton hide={!isResting} color={moment.ui.color} onClick={mute}>
             <MusicIcon />
             {muted && <MuteIcon />}
           </MuteButton>
-          <AboutButton hide={!isResting} color={moment.ui} onClick={setAbout}>
+          <AboutButton
+            hide={!isResting}
+            color={moment.ui.color}
+            onClick={setAbout}
+          >
             About
           </AboutButton>
 

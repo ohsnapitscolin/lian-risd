@@ -23,6 +23,11 @@
   src: url("../fonts/MaisonNeue-Book.otf") format("opentype");
 }
 
+@font-face {
+  font-family: "Superstudio";
+  src: url("../fonts/SuperstudioLL-Regular.otf") format("opentype");
+}
+
 html,
 body,
 #___gatsby,
@@ -35,7 +40,7 @@ body {
   margin: 0;
   padding: 24px;
   background-color: #ede6d3;
-  font-family: Arial !important;
+  font-family: Arial;
   box-sizing: border-box;
 
   -webkit-tap-highlight-color: transparent;

@@ -38,7 +38,7 @@ const Fill = styled.div`
 const Slide = styled.div`
   position: absolute;
   top: -10px;
-  right: 8px;
+  right: 10px;
   width: 5px;
   height: ${(p) => p.slide}%;
   border-radius: 3px;
@@ -106,7 +106,7 @@ export default function Blinds({ slide, moment, momentProgress, hide }) {
             </Blind>
           ))}
       </Grid>
-      <Slide hide={hide} slide={progress(30, 80, slide / 100)} />
+      <Slide hide={hide} slide={progress(30, 75, slide / 100)} />
     </>
   );
 }
