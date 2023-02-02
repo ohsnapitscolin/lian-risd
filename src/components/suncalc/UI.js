@@ -93,6 +93,17 @@ const AboutButton = styled(UIButton)`
   bottom: 25px;
   right: 30px;
   padding: 0;
+
+  svg {
+    path {
+      fill: ${(p) => p.color};
+      transition: fill: 0.5 ease;
+    }
+    circle {
+      stroke: ${(p) => p.color};
+      stroke: fill: 0.5 ease;
+    }
+  }
 `;
 
 export default function UI({ hide, slide, muted, mute, setAbout, setTapIn }) {

@@ -45,7 +45,7 @@ export const Phase = {
   solarNoon: {
     birds: { name: "birdsSinging", volume: 5, frequency: 50 },
     wind: { name: "wind", volume: 6, frequency: 80 },
-    chimes: { name: "chimes", volume: 4, frequency: 75 },
+    chimes: { name: "chimes", volume: 4, frequency: 20 },
     displayName: "Solar Noon",
   },
   goldenHour: {
@@ -81,6 +81,8 @@ export const Phase = {
   },
 };
 
+export const Interval = [0.5, 1];
+
 class AudioService {
   howls = {};
   loaded = [];
@@ -90,24 +92,24 @@ class AudioService {
 
   constructor() {
     this.start = new Date();
-    this._addTrack("base", baselayer, true, 0.02);
-    this._addTrack("nightLoop", nightLoop, true);
-    this._addTrack("bell", bell, false);
+    this._addTrack("base", baselayer, 0.01, true);
+    this._addTrack("nightLoop", nightLoop, 0.55, true);
+    this._addTrack("bell", bell, 0.55);
 
     // birds
-    this._addTrack("birdsInsect", birdsInsect);
-    this._addTrack("birdsSinging", birdsSinging);
-    this._addTrack("birdsMorning", birdsMorning);
+    this._addTrack("birdsInsect", birdsInsect, 0.2);
+    this._addTrack("birdsSinging", birdsSinging, 0.1);
+    this._addTrack("birdsMorning", birdsMorning, 0.2);
 
     // insects
-    this._addTrack("insectsAfternoon", insectsAfternoon);
-    this._addTrack("insectsNight", insectsNight);
+    this._addTrack("insectsAfternoon", insectsAfternoon, 0.2);
+    this._addTrack("insectsNight", insectsNight, 0.15);
 
     // wind
-    this._addTrack("wind", wind);
+    this._addTrack("wind", wind, 0.1);
 
     // chimes
-    this._addTrack("chimes", chimes);
+    this._addTrack("chimes", chimes, 0.05);
   }
 
   initialize(onLoaded) {
@@ -128,7 +130,7 @@ class AudioService {
     }
   }
 
-  _addTrack(name, src, loop = false, volume = 1) {
+  _addTrack(name, src, volume = 1, loop = false) {
     this.howls[name] = {
       howl: new Howl({
         src,
@@ -142,6 +144,15 @@ class AudioService {
 
   play(name) {
     this.howls[name].howl.play();
+  }
+
+  pause(name) {
+    this.howls[name].howl.pause();
+  }
+
+  songVolume(name, volume) {
+    const howl = this.howls[name];
+    howl.howl.volume(progress(0, 1, volume));
   }
 
   mute(mute) {

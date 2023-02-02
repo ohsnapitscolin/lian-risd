@@ -1,6 +1,6 @@
 import SunCalc from "suncalc";
 import { progress } from "../utils/math";
-import { Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 export const Transition = 500;
 
@@ -127,7 +127,17 @@ class SunCalcService {
 
   initialized = false;
 
-  momentSubject = new Subject();
+  momentSubject = new BehaviorSubject({
+    current: {},
+    next: {},
+    progress: 0,
+    skyProgress: 0,
+    dayProgress: 0,
+    ui: "light",
+    watts: 0,
+    song: null,
+    hour: null,
+  });
 
   async initialize(speed, date, coords) {
     this.speed = speed || 1;

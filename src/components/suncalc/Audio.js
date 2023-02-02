@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSong, useHour } from "../../hooks/suncalc";
-import audio from "../../services/audio";
+import audio, { Interval } from "../../services/audio";
 import suncalc from "../../services/suncalc";
-
-const Interval = [1, 5];
 
 function random(min, max) {
   return Math.random() * (max - min) + min;
@@ -25,6 +23,7 @@ export default function Audio({ slide, play }) {
       setInterval("insects", true);
       setInterval("wind", true);
       setInterval("chimes", true);
+      audio.play("nightLoop");
       setInitialized(true);
     });
   }, [play]);
