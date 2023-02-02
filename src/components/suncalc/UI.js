@@ -4,6 +4,7 @@ import { useUI, useWatts } from "../../hooks/suncalc";
 
 import MusicIcon from "../../svg/music-icon.svg";
 import MuteIcon from "../../svg/mute-icon.svg";
+import InfoIcon from "../../svg/info-icon.svg";
 import WOutline from "../../svg/w-outline.svg";
 
 import { Transition } from "../../services/suncalc";
@@ -111,7 +112,7 @@ export default function UI({ hide, slide, muted, mute, setAbout, setTapIn }) {
         {muted && <MuteIcon />}
       </MuteButton>
       <AboutButton hide={hide} color={ui.color} onClick={setAbout}>
-        About
+        <InfoIcon />
       </AboutButton>
     </>
   );

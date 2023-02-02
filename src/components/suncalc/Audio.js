@@ -1,50 +1,59 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSong, useHour } from "../../hooks/suncalc";
 import audio from "../../services/audio";
 import suncalc from "../../services/suncalc";
 
-const Interval = [2, 10];
+const Interval = [1, 5];
 
 function random(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  return Math.random() * (max - min) + min;
 }
 
-export default function Audio({ slide }) {
+export default function Audio({ slide, play }) {
   const prevHour = useRef();
 
   const song = useSong();
   const hour = useHour();
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    const start = new Date();
+    if (!play) return;
 
     audio.initialize(() => {
-      const finish = new Date();
-      console.log("audio initialized", finish - start);
+      audio.play("base");
+      setInterval("birds", true);
+      setInterval("insects", true);
+      setInterval("wind", true);
+      setInterval("chimes", true);
+      setInitialized(true);
     });
-    setInterval();
-  }, []);
+  }, [play]);
 
-  const setInterval = (sound) => {
-    const minutes = random(Interval[0], Interval[1]);
+  const setInterval = (sound, first) => {
+    const min = Interval[0] - (first ? 1 : 0);
+    const max = Interval[1] - (first ? 1 : 0);
+    const minutes = random(min, max);
+    console.log(sound, (minutes * 60).toFixed(0));
     setTimeout(() => {
-      console.log("check sound", suncalc.moment.song);
+      audio.playSound(suncalc.moment.song, sound);
       setInterval(sound);
     }, minutes * 60 * 1000);
   };
 
   useEffect(() => {
+    if (!play || !initialized) return;
     console.log(song);
-  }, [song]);
+  }, [play, song, initialized]);
 
   useEffect(() => {
+    if (!play || !initialized) return;
     const currHour = hour ?? null;
     console.log(prevHour.current, hour);
     if (prevHour.current != null && currHour != null) {
       audio.chime();
     }
     prevHour.current = hour;
-  }, [hour]);
+  }, [play, hour, initialized]);
 
   useEffect(() => {
     audio.volume(1 - slide / 100);

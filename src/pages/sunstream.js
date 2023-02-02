@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled, { createGlobalStyle, keyframes } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 import { Transition } from "../services/suncalc";
 import audio from "../services/audio";
@@ -9,7 +9,7 @@ import SunStreamIcon from "../svg/sun-stream.svg";
 
 import Sky from "../components/suncalc/Sky";
 import Blinds from "../components/suncalc/Blinds";
-import UI from "../components/suncalc/UI";
+import Ui from "../components/suncalc/UI";
 import TapIn from "../components/suncalc/TapIn";
 import Info from "../components/suncalc/Info";
 import Audio from "../components/suncalc/Audio";
@@ -142,7 +142,6 @@ const About = styled.div`
   width: 100%;
   height: 100%;
   z-index: 10;
-  background: linear-gradient(180deg, #f2f6ba 0%, #ffffff 100%);
 
   opacity: ${({ hide }) => (hide ? 0 : 1)};
   transition: opacity ${Transition}ms;
@@ -160,6 +159,8 @@ const AboutContent = styled.div`
   color: #4f4f4d;
 
   padding: 30px;
+  background: linear-gradient(180deg, #f2f6ba 0%, #ffffff 100%);
+  min-height: 100%;
 `;
 
 const AboutBack = styled.button`
@@ -205,11 +206,6 @@ export default function SunStream() {
 
   const startResting = () => {
     setView(View.Resting);
-    audio.play("base");
-    // audio.play("nightLoop");
-    setTimeout(() => {
-      audio.fade("base", "meadow", 5000);
-    }, 5000);
   };
 
   const setTapIn = () => {
@@ -233,7 +229,7 @@ export default function SunStream() {
   return (
     <>
       <BodyStyle />
-      <Audio slide={slide} />
+      <Audio slide={slide} play={!isLanding} />
 
       <LandingContainer
         hide={!isLanding}
@@ -276,7 +272,7 @@ export default function SunStream() {
         onBack={() => setView(View.Resting)}
       />
 
-      <UI
+      <Ui
         hide={!isResting}
         slide={slide}
         setAbout={setAbout}
