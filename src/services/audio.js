@@ -1,9 +1,12 @@
 import { Howl, Howler } from "howler";
 
 import baselayer from "../audio/baselayer.wav";
-import meadow from "../audio/meadow.wav";
 import nightLoop from "../audio/night_loop_1.wav";
 import bell from "../audio/hourbell_3_2.wav";
+
+import birdsInsect from "../audio/birds/birds-insects.wav";
+import birdsSinging from "../audio/birds/birds-singing.wav";
+import parkMorningBirds from "../audio/birds/park-morning-birds.wav";
 
 // import unmute from "../vendor/unmute";
 
@@ -15,9 +18,12 @@ class AudioService {
 
   constructor() {
     this._addTrack("base", baselayer, true, 0.1);
-    this._addTrack("meadow", meadow, true);
     this._addTrack("nightLoop", nightLoop, true);
     this._addTrack("bell", bell, false);
+
+    this._addTrack("birdsInsect", birdsInsect);
+    this._addTrack("birdsSinging", birdsSinging);
+    this._addTrack("parkMorningBirds", parkMorningBirds);
   }
 
   initialize(onLoaded) {
@@ -31,6 +37,7 @@ class AudioService {
   }
 
   _checkLoaded() {
+    console.log(this.loaded, Object.keys(this.howls).length);
     if (this.loaded.length === Object.keys(this.howls).length) {
       // unmute(Howler.ctx, true);
       this.onLoaded && this.onLoaded();

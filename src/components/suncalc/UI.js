@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useUI, useWatts } from "../../hooks/suncalc";
 
 import MusicIcon from "../../svg/music-icon.svg";
@@ -7,6 +7,15 @@ import MuteIcon from "../../svg/mute-icon.svg";
 import WOutline from "../../svg/w-outline.svg";
 
 import { Transition } from "../../services/suncalc";
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 const UIButton = styled.button`
   color: ${(p) => p.color};
@@ -46,6 +55,7 @@ const Watts = styled(UIButton)`
       stroke: ${(p) => p.color};
       transition: stroke: 0.5 ease;
     }
+    animation: ${rotate} 60s linear infinite;
   }
 `;
 
@@ -84,9 +94,9 @@ const AboutButton = styled(UIButton)`
   padding: 0;
 `;
 
-export default function UI({ hide, muted, mute, setAbout, setTapIn }) {
+export default function UI({ hide, slide, muted, mute, setAbout, setTapIn }) {
   const ui = useUI();
-  const watts = useWatts();
+  const watts = useWatts(slide);
 
   if (!ui || !watts) return null;
 

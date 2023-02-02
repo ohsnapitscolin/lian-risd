@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import styled, { createGlobalStyle } from "styled-components";
+import React, { useState } from "react";
+import styled, { createGlobalStyle, keyframes } from "styled-components";
 
 import { Transition } from "../services/suncalc";
 import audio from "../services/audio";
@@ -12,8 +12,9 @@ import Blinds from "../components/suncalc/Blinds";
 import UI from "../components/suncalc/UI";
 import TapIn from "../components/suncalc/TapIn";
 import Info from "../components/suncalc/Info";
+import Audio from "../components/suncalc/Audio";
 
-import { useInitialize, useSong, useHour } from "../hooks/suncalc";
+import { useInitialize } from "../hooks/suncalc";
 
 import "../style/index.css";
 
@@ -189,29 +190,9 @@ export default function SunStream() {
   const [view, setView] = useState(View.Landing);
   const [muted, setMuted] = useState(false);
 
-  const prevHour = useRef();
   const moment = {};
 
   useInitialize();
-
-  const song = useSong();
-  const hour = useHour();
-
-  useEffect(() => {
-    console.log(song);
-  }, [song]);
-
-  useEffect(() => {
-    const currHour = hour ?? null;
-    if (prevHour.current != null && currHour != null) {
-      audio.chime();
-    }
-    prevHour.current = hour;
-  }, [hour]);
-
-  useEffect(() => {
-    audio.volume(1 - slide / 100);
-  }, [slide]);
 
   const drag = (e, data) => {
     if (typeof e.target.className !== "string") return;
@@ -252,6 +233,7 @@ export default function SunStream() {
   return (
     <>
       <BodyStyle />
+      <Audio slide={slide} />
 
       <LandingContainer
         hide={!isLanding}
@@ -296,6 +278,7 @@ export default function SunStream() {
 
       <UI
         hide={!isResting}
+        slide={slide}
         setAbout={setAbout}
         setTapIn={setTapIn}
         mute={mute}
@@ -326,8 +309,6 @@ export default function SunStream() {
         </AboutContent>
         <AboutBack onClick={() => setView(View.Resting)} />
       </About>
-      {/* </>
-      // )} */}
     </>
   );
 }

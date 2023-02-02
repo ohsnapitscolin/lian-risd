@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import SunCalc, { Phase } from "../services/suncalc";
 import isEqual from "lodash/isEqual";
+import { progress } from "../utils/math";
 
 export function useInitialize() {
   const requestRef = useRef();
@@ -42,10 +43,10 @@ export function useDate() {
 
   useEffect(() => {
     const sub = SunCalc.momentSubject.subscribe((moment) => {
-      if (moment.date != date) setDate(moment.date);
+      if (moment.date !== date) setDate(moment.date);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [date]);
 
   return date;
 }
@@ -56,10 +57,10 @@ export function useProgress() {
   useEffect(() => {
     const sub = SunCalc.momentSubject.subscribe((moment) => {
       const rounded = moment.progress.toFixed(3);
-      if (rounded != progress) setProgress(rounded);
+      if (rounded !== progress) setProgress(rounded);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [progress]);
 
   return progress;
 }
@@ -70,10 +71,10 @@ export function useSkyProgress() {
   useEffect(() => {
     const sub = SunCalc.momentSubject.subscribe((moment) => {
       const rounded = moment.skyProgress.toFixed(3);
-      if (rounded != skyProgress) setSkyProgress(rounded);
+      if (rounded !== skyProgress) setSkyProgress(rounded);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [skyProgress]);
 
   return skyProgress;
 }
@@ -83,10 +84,11 @@ export function useDayProgress() {
 
   useEffect(() => {
     const sub = SunCalc.momentSubject.subscribe((moment) => {
-      if (moment.dayProgress != dayProgress) setDayProgress(moment.dayProgress);
+      if (moment.dayProgress !== dayProgress)
+        setDayProgress(moment.dayProgress);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [dayProgress]);
 
   return dayProgress;
 }
@@ -100,12 +102,12 @@ export function usePhases() {
       if (!isEqual(Phase[moment.current.name], current)) {
         setCurrent(Phase[moment.current.name]);
       }
-      if (!isEqual(Phase[moment.next.name] != current)) {
+      if (!isEqual(Phase[moment.next.name] !== current)) {
         setNext(Phase[moment.next.name]);
       }
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [current, next]);
 
   return { current, next };
 }
@@ -118,23 +120,32 @@ export function useUI() {
       if (!isEqual(moment.ui, ui)) setUI(moment.ui);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [ui]);
 
   return ui;
 }
 
-export function useWatts() {
+export function useWatts(slide) {
   const [watts, setWatts] = useState(null);
+
+  const phases = usePhases();
 
   useEffect(() => {
     const sub = SunCalc.momentSubject.subscribe((moment) => {
       const roundedWatts = moment.watts.toFixed(0);
-      if (roundedWatts !== watts) setWatts(roundedWatts);
+      if (roundedWatts !== watts) setWatts(Number(roundedWatts));
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [watts]);
 
-  return watts;
+  if (!phases.current || !phases.next) return null;
+
+  const adjustedWatts = progress(
+    phases.current.watts[1],
+    watts,
+    1 - slide / 100
+  );
+  return adjustedWatts.toFixed(0);
 }
 
 export function useSong() {
@@ -145,7 +156,7 @@ export function useSong() {
       if (moment.song !== song) setSong(moment.song);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [song]);
 
   return song;
 }
@@ -158,7 +169,7 @@ export function useHour() {
       if (moment.hour !== hour) setHour(moment.hour);
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [hour]);
 
   return hour;
 }
