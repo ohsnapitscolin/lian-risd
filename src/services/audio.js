@@ -4,9 +4,14 @@ import baselayer from "../audio/baselayer.wav";
 import nightLoop from "../audio/night_loop_1.wav";
 import bell from "../audio/hourbell_3_2.wav";
 
+// Sounds
 import birdsInsect from "../audio/birds/birds-insects.wav";
 import birdsSinging from "../audio/birds/birds-singing.wav";
-import parkMorningBirds from "../audio/birds/park-morning-birds.wav";
+import birdsMorning from "../audio/birds/birds-morning.wav";
+import chimes from "../audio/chimes/chimes.wav";
+import insectsAfternoon from "../audio/insects/afternoon.wav";
+import insectsNight from "../audio/insects/night.wav";
+import wind from "../audio/wind/wind.wav";
 
 // import unmute from "../vendor/unmute";
 
@@ -21,9 +26,20 @@ class AudioService {
     this._addTrack("nightLoop", nightLoop, true);
     this._addTrack("bell", bell, false);
 
+    // birds
     this._addTrack("birdsInsect", birdsInsect);
     this._addTrack("birdsSinging", birdsSinging);
-    this._addTrack("parkMorningBirds", parkMorningBirds);
+    this._addTrack("birdsMorning", birdsMorning);
+
+    // insects
+    this._addTrack("insectsAfternoon", insectsAfternoon);
+    this._addTrack("insectsNight", insectsNight);
+
+    // wind
+    this._addTrack("wind", wind);
+
+    // chimes
+    this._addTrack("chimes", chimes);
   }
 
   initialize(onLoaded) {
