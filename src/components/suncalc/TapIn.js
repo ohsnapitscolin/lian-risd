@@ -112,9 +112,9 @@ export default function TapIn({ hide, moment, slide, onBack, speed }) {
     name = next.displayName;
   }
 
-  if (slide < 0.33) {
+  if (slide < 33) {
     light = "streaming through";
-  } else if (slide < 0.67) {
+  } else if (slide < 67) {
     light = "filtered by";
   } else {
     light = "hidden behind";
