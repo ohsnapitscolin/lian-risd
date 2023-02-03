@@ -133,7 +133,7 @@ const LandingContent = styled.div`
 
   span {
     position: absolute;
-    bottom: 60px;
+    bottom: 45px;
     left: 50%;
     transform: translate(-50%, 0);
   }

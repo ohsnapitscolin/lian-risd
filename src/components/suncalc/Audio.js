@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSong, useHour } from "../../hooks/suncalc";
 import audio, { Interval } from "../../services/audio";
 import suncalc from "../../services/suncalc";
+import { progress } from "../../utils/math";
 
 function random(min, max) {
   return Math.random() * (max - min) + min;
@@ -61,7 +62,7 @@ export default function Audio({ slide, play, onLoad }) {
   }, [play, hour, initialized]);
 
   useEffect(() => {
-    audio.volume(1 - slide / 100);
+    audio.volume(progress(0.1, 1, 1 - slide / 100));
   }, [slide]);
 
   return null;

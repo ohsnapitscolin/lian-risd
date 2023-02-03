@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 import audio from "../services/audio";
-import { progress } from "../utils/math";
 
 const Container = styled.div`
   display: flex;

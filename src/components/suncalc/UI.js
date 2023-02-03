@@ -54,7 +54,8 @@ const Watts = styled(UIButton)`
     height: 100%;
     & > * {
       stroke: ${(p) => p.color};
-      transition: stroke: 0.5 ease;
+      fill: ${(p) => p.color};
+      transition: stroke, fill 0.5 ease;
     }
     animation: ${rotate} 60s linear infinite;
   }

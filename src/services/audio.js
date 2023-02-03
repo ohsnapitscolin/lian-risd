@@ -5,7 +5,6 @@ import bell from "../audio/hourbell_3_2.wav";
 
 // Songs
 import nightLoop from "../audio/night_loop_1.wav";
-import dayLoop from "../audio/misc_loop_1.wav";
 
 // Sounds
 import birdsInsect from "../audio/birds/birds-insects.wav";
@@ -25,77 +24,77 @@ const Required = ["base", "bell"];
 export const Phase = {
   nightEnd: {
     song: "nightLoop",
-    insects: { name: "insectsNight", volume: 5, frequency: 50 },
+    insects: { name: "insectsNight", frequency: 50 },
     displayName: "Astronomical Dawn",
   },
   nauticalDawn: {
     song: "nightLoop",
-    birds: { name: "birdsInsect", volume: 1, frequency: 20 },
+    birds: { name: "birdsInsect", frequency: 20 },
     displayName: "Nautical Dawn",
   },
   dawn: {
     song: "nightLoop",
-    birds: { name: "birdsInsect", volume: 2, frequency: 50 },
+    birds: { name: "birdsInsect", frequency: 50 },
     displayName: "Civil Dawn",
   },
   sunrise: {
     song: "nightLoop",
-    birds: { name: "birdsMorning", volume: 4, frequency: 75 },
+    birds: { name: "birdsMorning", frequency: 75 },
     displayName: "Sunrise",
   },
   sunriseEnd: {
     song: "nightLoop",
-    birds: { name: "birdsMorning", volume: 5, frequency: 90 },
+    birds: { name: "birdsMorning", frequency: 90 },
     displayName: "Sunrise End",
   },
   goldenHourEnd: {
     song: "nightLoop",
-    birds: { name: "birdsSinging", volume: 7, frequency: 100 },
+    birds: { name: "birdsSinging", frequency: 100 },
     displayName: "Morning Golden Hour",
   },
   solarNoon: {
-    song: "nightLoop",
-    birds: { name: "birdsSinging", volume: 5, frequency: 50 },
-    wind: { name: "wind", volume: 6, frequency: 80 },
-    chimes: { name: "chimes", volume: 4, frequency: 20 },
+    song: "",
+    birds: { name: "birdsSinging", frequency: 50 },
+    wind: { name: "wind", frequency: 80 },
+    chimes: { name: "chimes", frequency: 40 },
     displayName: "Solar Noon",
   },
   goldenHour: {
     song: "nightLoop",
-    insects: { name: "insectsAfternoon", volume: 3, frequency: 50 },
-    wind: { name: "wind", volume: 4, frequency: 50 },
-    chimes: { name: "chimes", volume: 5, frequency: 100 },
+    insects: { name: "insectsAfternoon", frequency: 50 },
+    wind: { name: "wind", frequency: 50 },
+    chimes: { name: "chimes", frequency: 100 },
     displayName: "Golden Hour",
   },
   sunsetStart: {
     song: "nightLoop",
-    insects: { name: "insectsAfternoon", volume: 4, frequency: 65 },
-    chimes: { name: "chimes", volume: 4, frequency: 50 },
+    insects: { name: "insectsAfternoon", frequency: 65 },
+    chimes: { name: "chimes", frequency: 50 },
     displayName: "Sunset",
   },
   sunset: {
     song: "nightLoop",
-    insects: { name: "insectsAfternoon", volume: 5, frequency: 75 },
+    insects: { name: "insectsAfternoon", frequency: 75 },
     displayName: "Sunset End",
   },
   dusk: {
     song: "nightLoop",
-    insects: { name: "insectsAfternoon", volume: 6, frequency: 100 },
+    insects: { name: "insectsAfternoon", frequency: 100 },
     displayName: "Civil Dusk",
   },
   nauticalDusk: {
     song: "nightLoop",
-    insects: { name: "insectsAfternoon", volume: 7, frequency: 100 },
+    insects: { name: "insectsAfternoon", frequency: 100 },
     displayName: "Nautical Dusk",
   },
   night: {
     song: "nightLoop",
-    insects: { name: "insectsAfternoon", volume: 7, frequency: 100 },
+    insects: { name: "insectsAfternoon", frequency: 100 },
     displayName: "Astronomical Dusk",
   },
   nadir: {
     song: "nightLoop",
-    insects: { name: "insectsNight", volume: 7, frequency: 100 },
+    insects: { name: "insectsNight", frequency: 100 },
     displayName: "Nadir",
   },
 };
@@ -161,7 +160,7 @@ class AudioService {
   initialize(phase, onRequiredLoad, onLoad) {
     this.start = new Date();
 
-    this.required = [...Required, Phase[phase].song];
+    this.required = [...Required, Phase[phase].song].filter(Boolean);
 
     this.onLoad = onLoad;
     this.onRequiredLoad = onRequiredLoad;
@@ -241,6 +240,7 @@ class AudioService {
 
   playSong(phase) {
     const name = Phase[phase].song;
+    if (!name) return;
     this.howls[name].howl.play();
   }
 
@@ -256,7 +256,7 @@ class AudioService {
 
     const howl = this.howls[config.name];
 
-    const volume = progress(0, howl.maxVolume, config.volume / 10);
+    const volume = howl.maxVolume;
     console.log("playSound", config.name, volume);
 
     howl.howl.fade(0, volume, 3000);
