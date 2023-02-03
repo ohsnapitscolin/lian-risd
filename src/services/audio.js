@@ -104,7 +104,7 @@ const Scale = 3;
 const Song = {
   base: {
     track: baselayer,
-    max: 0.01,
+    max: 0.005,
     loop: true,
   },
   bell: {
