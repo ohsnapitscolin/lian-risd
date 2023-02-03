@@ -196,6 +196,7 @@ const View = {
 
 export default function SunStream() {
   const [slide, setSlide] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   const [view, setView] = useState(View.Landing);
   const [muted, setMuted] = useState(false);
@@ -238,19 +239,19 @@ export default function SunStream() {
   return (
     <>
       <BodyStyle />
-      <Audio slide={slide} play={!isLanding} />
+      <Audio slide={slide} play={!isLanding} onLoad={() => setLoaded(true)} />
 
       <LandingContainer
         hide={!isLanding}
         className={!isLanding ? "hide" : ""}
-        onClick={isLanding ? startResting : null}
+        onClick={isLanding && loaded ? startResting : null}
       >
         <Landing>
           <Sun />
         </Landing>
         <LandingContent>
           <SunStreamIcon />
-          <span>Tap to listen</span>
+          <span>{loaded ? "Tap to listen" : "Warming up..."}</span>
         </LandingContent>
       </LandingContainer>
 

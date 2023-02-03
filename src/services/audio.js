@@ -1,8 +1,11 @@
 import { Howl, Howler } from "howler";
 
 import baselayer from "../audio/baselayer.wav";
-import nightLoop from "../audio/night_loop_1.wav";
 import bell from "../audio/hourbell_3_2.wav";
+
+// Songs
+import nightLoop from "../audio/night_loop_1.wav";
+import dayLoop from "../audio/misc_loop_1.wav";
 
 // Sounds
 import birdsInsect from "../audio/birds/birds-insects.wav";
@@ -17,67 +20,135 @@ import { progress } from "../utils/math";
 
 // import unmute from "../vendor/unmute";
 
+const Required = ["base", "bell"];
+
 export const Phase = {
   nightEnd: {
+    song: "nightLoop",
     insects: { name: "insectsNight", volume: 5, frequency: 50 },
     displayName: "Astronomical Dawn",
   },
   nauticalDawn: {
+    song: "nightLoop",
     birds: { name: "birdsInsect", volume: 1, frequency: 20 },
     displayName: "Nautical Dawn",
   },
   dawn: {
+    song: "nightLoop",
     birds: { name: "birdsInsect", volume: 2, frequency: 50 },
     displayName: "Civil Dawn",
   },
   sunrise: {
+    song: "nightLoop",
     birds: { name: "birdsMorning", volume: 4, frequency: 75 },
     displayName: "Sunrise",
   },
   sunriseEnd: {
+    song: "nightLoop",
     birds: { name: "birdsMorning", volume: 5, frequency: 90 },
     displayName: "Sunrise End",
   },
   goldenHourEnd: {
+    song: "nightLoop",
     birds: { name: "birdsSinging", volume: 7, frequency: 100 },
     displayName: "Morning Golden Hour",
   },
   solarNoon: {
+    song: "nightLoop",
     birds: { name: "birdsSinging", volume: 5, frequency: 50 },
     wind: { name: "wind", volume: 6, frequency: 80 },
     chimes: { name: "chimes", volume: 4, frequency: 20 },
     displayName: "Solar Noon",
   },
   goldenHour: {
+    song: "nightLoop",
     insects: { name: "insectsAfternoon", volume: 3, frequency: 50 },
     wind: { name: "wind", volume: 4, frequency: 50 },
     chimes: { name: "chimes", volume: 5, frequency: 100 },
     displayName: "Golden Hour",
   },
   sunsetStart: {
+    song: "nightLoop",
     insects: { name: "insectsAfternoon", volume: 4, frequency: 65 },
     chimes: { name: "chimes", volume: 4, frequency: 50 },
     displayName: "Sunset",
   },
   sunset: {
+    song: "nightLoop",
     insects: { name: "insectsAfternoon", volume: 5, frequency: 75 },
     displayName: "Sunset End",
   },
   dusk: {
+    song: "nightLoop",
     insects: { name: "insectsAfternoon", volume: 6, frequency: 100 },
     displayName: "Civil Dusk",
   },
   nauticalDusk: {
+    song: "nightLoop",
     insects: { name: "insectsAfternoon", volume: 7, frequency: 100 },
     displayName: "Nautical Dusk",
   },
   night: {
+    song: "nightLoop",
     insects: { name: "insectsAfternoon", volume: 7, frequency: 100 },
     displayName: "Astronomical Dusk",
   },
   nadir: {
+    song: "nightLoop",
     insects: { name: "insectsNight", volume: 7, frequency: 100 },
     displayName: "Nadir",
+  },
+};
+
+const Scale = 2;
+
+const Song = {
+  base: {
+    track: baselayer,
+    max: 0.01,
+    loop: true,
+  },
+  bell: {
+    track: bell,
+    max: 0.33,
+  },
+  // dayLoop: {
+  //   track: dayLoop,
+  //   max: 0.05,
+  //   loop: true,
+  // },
+  nightLoop: {
+    track: nightLoop,
+    max: 0.07,
+    loop: true,
+  },
+  birdsInsect: {
+    track: birdsInsect,
+    max: 0.19,
+  },
+  birdsSinging: {
+    track: birdsSinging,
+    max: 0.02,
+  },
+  birdsMorning: {
+    track: birdsMorning,
+    max: 0.27,
+  },
+  insectsAfternoon: {
+    track: insectsAfternoon,
+    max: 0.21,
+  },
+  insectsNight: {
+    track: insectsNight,
+    max: 0.17,
+  },
+  wind: {
+    track: wind,
+    max: 0.05,
+  },
+  chimes: {
+    track: chimes,
+    max: 0.03,
   },
 };
 
@@ -87,34 +158,34 @@ class AudioService {
   howls = {};
   loaded = [];
 
-  onLoaded = null;
-  start;
-
-  constructor() {
+  initialize(phase, onRequiredLoad, onLoad) {
     this.start = new Date();
-    this._addTrack("base", baselayer, 0.02, true);
-    this._addTrack("nightLoop", nightLoop, 0.07, true);
-    this._addTrack("bell", bell, 0.33);
 
-    // birds
-    this._addTrack("birdsInsect", birdsInsect, 0.19);
-    this._addTrack("birdsSinging", birdsSinging, 0.02);
-    this._addTrack("birdsMorning", birdsMorning, 0.27);
+    this.required = [...Required, Phase[phase].song];
 
-    // insects
-    this._addTrack("insectsAfternoon", insectsAfternoon, 0.21);
-    this._addTrack("insectsNight", insectsNight, 0.17);
+    this.onLoad = onLoad;
+    this.onRequiredLoad = onRequiredLoad;
+    this.calledRequired = false;
 
-    // wind
-    this._addTrack("wind", wind, 0.05);
+    this.loadRequire();
 
-    // chimes
-    this._addTrack("chimes", chimes, 0.03);
+    this.initialized = true;
   }
 
-  initialize(onLoaded) {
-    this.onLoaded = onLoaded;
-    this._checkLoaded();
+  loadRequire() {
+    this.required.forEach((name) => {
+      const song = Song[name];
+      this._addTrack(name, song.track, song.max, song.loop);
+    });
+  }
+
+  loadAll() {
+    Object.keys(Song)
+      .filter((name) => !this.required.includes(name))
+      .forEach((name) => {
+        const song = Song[name];
+        this._addTrack(name, song.track, song.max, song.loop);
+      });
   }
 
   _handleLoad(name) {
@@ -123,9 +194,18 @@ class AudioService {
   }
 
   _checkLoaded() {
+    if (this.required?.every((name) => this.loaded.includes(name))) {
+      if (!this.calledRequired) {
+        this.calledRequired = true;
+        console.log("required loaded", new Date() - this.start, this.loaded);
+        this.onRequiredLoad() && this.onRequiredLoad();
+        this.loadAll();
+      }
+    }
+
     if (this.loaded.length === Object.keys(this.howls).length) {
       // unmute(Howler.ctx, true);
-      this.onLoaded && this.onLoaded();
+      this.onLoad && this.onLoad();
       console.log("loaded", new Date() - this.start, this.loaded);
     }
   }
@@ -135,7 +215,7 @@ class AudioService {
       howl: new Howl({
         src,
         loop,
-        volume,
+        volume: volume * Scale,
         onload: () => this._handleLoad(name),
       }),
       maxVolume: volume,
@@ -159,8 +239,9 @@ class AudioService {
     Howler.mute(mute);
   }
 
-  paySong(song) {
-    this.howls[song].howl.play();
+  playSong(phase) {
+    const name = Phase[phase].song;
+    this.howls[name].howl.play();
   }
 
   playSound(phase, sound) {

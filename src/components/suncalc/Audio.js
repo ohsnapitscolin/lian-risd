@@ -7,7 +7,7 @@ function random(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-export default function Audio({ slide, play }) {
+export default function Audio({ slide, play, onLoad }) {
   const prevHour = useRef();
 
   const song = useSong();
@@ -15,17 +15,23 @@ export default function Audio({ slide, play }) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
+    if (song && !audio.initialized) {
+      audio.initialize(song, () => {
+        setInitialized(true);
+        onLoad();
+      });
+    }
+  }, [song]);
+
+  useEffect(() => {
     if (!play) return;
 
-    audio.initialize(() => {
-      audio.play("base");
-      setInterval("birds", true);
-      setInterval("insects", true);
-      setInterval("wind", true);
-      setInterval("chimes", true);
-      audio.play("nightLoop");
-      setInitialized(true);
-    });
+    audio.play("base");
+    audio.playSong(song);
+    setInterval("birds", true);
+    setInterval("insects", true);
+    setInterval("wind", true);
+    setInterval("chimes", true);
   }, [play]);
 
   const setInterval = (sound, first) => {
