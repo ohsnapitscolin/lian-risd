@@ -209,12 +209,13 @@ class AudioService {
     }
   }
 
-  _addTrack(name, src, volume = 1, loop = false) {
+  _addTrack(name, src, volume, loop = false) {
+    volume = volume * Scale;
     this.howls[name] = {
       howl: new Howl({
         src,
         loop,
-        volume: volume * Scale,
+        volume,
         onload: () => this._handleLoad(name),
       }),
       maxVolume: volume,
