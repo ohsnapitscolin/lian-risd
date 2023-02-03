@@ -71,7 +71,7 @@ const TapInBack = styled.button`
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: linear-gradient(180deg, #757f8c 0%, #c1bfc1 100%);
+  background: linear-gradient(180deg, #f2f6ba 0%, #ffffff 100%);
 
   appearance: none;
   border: 0;

@@ -18,6 +18,8 @@ import { useInitialize } from "../hooks/suncalc";
 
 import "../style/index.css";
 
+const LandingTransition = 3000;
+
 const BodyStyle = createGlobalStyle`
   body {
     color: white;
@@ -95,11 +97,12 @@ const LandingContainer = styled.div`
   overflow: hidden;
 
   opacity: ${({ hide }) => (hide ? 0 : 1)};
-  transition: opacity ${Transition}ms;
+  transition: opacity ${LandingTransition}ms;
   visibility: ${({ hide }) => (hide ? "hidden" : "visible")};
 
   &.hide {
-    transition: visibility 0s linear ${Transition}ms, opacity ${Transition}ms;
+    transition: visibility 0s linear ${LandingTransition}ms,
+      opacity ${LandingTransition}ms;
   }
 
   cursor: pointer;
@@ -125,11 +128,12 @@ const LandingContent = styled.div`
 
   svg {
     max-width: 60%;
+    padding-bottom: 45px
   }
 
   span {
     position: absolute;
-    bottom: 25px;
+    bottom: 60px;
     left: 50%;
     transform: translate(-50%, 0);
   }
@@ -162,6 +166,10 @@ const AboutContent = styled.div`
   padding: 30px;
   background: linear-gradient(180deg, #f2f6ba 0%, #ffffff 100%);
   min-height: 100%;
+
+  a {
+    color: #4f4f4d;
+  }
 `;
 
 const AboutBack = styled.button`
@@ -171,7 +179,7 @@ const AboutBack = styled.button`
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: linear-gradient(180deg, #757f8c 0%, #c1bfc1 100%);
+  background: linear-gradient(180deg, #b0aca6 0%, #837c71 100%);
 
   appearance: none;
   border: 0;
@@ -286,23 +294,30 @@ export default function SunStream() {
         <AboutContent>
           <p>
             Sun Stream is a digital clock in the form of a 24-hour song that
-            changes based on the amount of a visitor’s available light.
+            shifts based on the amount of a visitor’s “available light.”
           </p>
           <p>
-            Loosely based on the concept of Circadian Rhythms, 14 sun positions
-            correspond to a selection of curated sound loops, with added
-            encounters— each listening experience constantly evolving.
+            Loosely inspired by the concept of Circadian Rhythms, 14 sun
+            positions are mapped to 14 audio loops. Additional sound layers are
+            generated in real time, while bells softly mark the passage of
+            hours.
           </p>
-          <p>
-            Bells softly mark the passage of hours. Sun Stream was made over
-            many moons by Lian Fumerton-Liu, Sam Kotrba, and Colin Dunn.
-          </p>
-          <span>Design: Lian Fumerton-Liu</span>
-          <span>Sound: Sam Kotrba</span>
+          <span>
+            Design: <a href="https://lian.land">Lian Fumerton-Liu</a>
+          </span>
+          <span>
+            Sound: <a href="https://samkotrba.com">Sam Kotrba</a>
+          </span>
           <span>Development: Colin Dunn</span>
-          <span>Words set in Superstudio by Lineto.</span>
-          <span>v1.0</span>
-          <span>© 2023</span>
+          <span>
+            Type is Superstudio by{" "}
+            <a href="https://lineto.com/typefaces/superstudio">Lineto</a>.
+          </span>
+          <span>
+            Data provided by{" "}
+            <a href="https://www.npmjs.com/package/suncalc">SunCalc</a>.
+          </span>
+          <span>© v1.0 2023</span>
         </AboutContent>
         <AboutBack onClick={() => setView(View.Resting)} />
       </About>
