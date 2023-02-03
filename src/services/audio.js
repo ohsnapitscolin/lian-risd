@@ -92,24 +92,24 @@ class AudioService {
 
   constructor() {
     this.start = new Date();
-    this._addTrack("base", baselayer, 0.01, true);
-    this._addTrack("nightLoop", nightLoop, 0.55, true);
-    this._addTrack("bell", bell, 0.55);
+    this._addTrack("base", baselayer, 0.02, true);
+    this._addTrack("nightLoop", nightLoop, 0.07, true);
+    this._addTrack("bell", bell, 0.33);
 
     // birds
-    this._addTrack("birdsInsect", birdsInsect, 0.2);
-    this._addTrack("birdsSinging", birdsSinging, 0.1);
-    this._addTrack("birdsMorning", birdsMorning, 0.2);
+    this._addTrack("birdsInsect", birdsInsect, 0.19);
+    this._addTrack("birdsSinging", birdsSinging, 0.02);
+    this._addTrack("birdsMorning", birdsMorning, 0.27);
 
     // insects
-    this._addTrack("insectsAfternoon", insectsAfternoon, 0.2);
-    this._addTrack("insectsNight", insectsNight, 0.15);
+    this._addTrack("insectsAfternoon", insectsAfternoon, 0.21);
+    this._addTrack("insectsNight", insectsNight, 0.17);
 
     // wind
-    this._addTrack("wind", wind, 0.1);
+    this._addTrack("wind", wind, 0.05);
 
     // chimes
-    this._addTrack("chimes", chimes, 0.05);
+    this._addTrack("chimes", chimes, 0.03);
   }
 
   initialize(onLoaded) {
