@@ -53,7 +53,7 @@ export const Phase = {
     displayName: "Morning Golden Hour",
   },
   solarNoon: {
-    song: "",
+    song: "nightLoop",
     birds: { name: "birdsSinging", frequency: 50 },
     wind: { name: "wind", frequency: 80 },
     chimes: { name: "chimes", frequency: 40 },

@@ -31,8 +31,9 @@ const Outline = styled(ClockOutline)`
   width: 100%;
   height: 100%;
 
-  circle {
-    stroke: ${(p) => p.color};
+  stroke: ${(p) => p.color};
+  path {
+    fill: ${(p) => p.color};
   }
 `;
 
