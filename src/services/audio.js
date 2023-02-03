@@ -99,7 +99,7 @@ export const Phase = {
   },
 };
 
-const Scale = 2;
+const Scale = 3;
 
 const Song = {
   base: {
