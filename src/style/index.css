@@ -28,6 +28,21 @@
   src: url("../fonts/SuperstudioLL-Regular.otf") format("opentype");
 }
 
+@font-face {
+  font-family: "Heirloom Home";
+  src: url("../fonts/Heirloom-Home.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Heirloom Garden";
+  src: url("../fonts/Heirloom-Garden.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Heirloom Seaside";
+  src: url("../fonts/Heirloom-Seaside.otf") format("opentype");
+}
+
 html,
 body,
 #___gatsby,

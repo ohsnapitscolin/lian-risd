@@ -54,9 +54,9 @@ export const Phase = {
   },
   solarNoon: {
     song: "nightLoop",
-    birds: { name: "birdsSinging", frequency: 50 },
+    birds: { name: "birdsSinging", frequency: 100 },
     wind: { name: "wind", frequency: 80 },
-    chimes: { name: "chimes", frequency: 40 },
+    chimes: { name: "chimes", frequency: 100 },
     displayName: "Solar Noon",
   },
   goldenHour: {
@@ -99,7 +99,7 @@ export const Phase = {
   },
 };
 
-const Scale = 3;
+const Scale = 10;
 
 const Song = {
   base: {
@@ -211,6 +211,8 @@ class AudioService {
 
   _addTrack(name, src, volume, loop = false) {
     volume = volume * Scale;
+    volume = Math.min(volume, 1);
+
     this.howls[name] = {
       howl: new Howl({
         src,
